@@ -1,0 +1,1 @@
+export const BACKEND_API = import.meta.env.FE_BACKEND_API 
