@@ -8,6 +8,11 @@ import {
   Container,
   CardContent,
   Alert,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  FormHelperText,
 } from "@mui/material";
 import {
   DirectionsCar as CarIcon,
@@ -22,13 +27,15 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextField } from "@/components/common/Textfield";
 import { Button } from "@/components/common/Button";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
+import { UserRole } from "@/domain/user/types";
 
 type RegisterFormInputs = {
   fullName: string;
   username: string;
   email: string;
   password: string;
+  role: "ADMINISTRATOR" | "DEALER" | "BUYER";
 };
 
 const Register = () => {
@@ -39,6 +46,7 @@ const Register = () => {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
     setError,
     clearErrors,
@@ -220,6 +228,33 @@ const Register = () => {
                     },
                   }}
                 />
+              </Box>
+
+              {/* Nuevo campo: Tipo de usuario */}
+              <Box sx={{ mb: 3 }}>
+                <FormControl fullWidth error={!!errors.role} disabled={isLoading}>
+                  <InputLabel id="role-label">Selecciona tu tipo de usuario</InputLabel>
+                  <Controller
+                    name="role"
+                    control={control}
+                    defaultValue={UserRole.BUYER}
+                    rules={{ required: "Selecciona un tipo de usuario" }}
+                    render={({ field }) => (
+                      <Select
+                        labelId="role-label"
+                        label="Selecciona tu tipo de usuario"
+                        {...field}
+                      >
+                        <MenuItem value={UserRole.ADMINISTRATOR}>Administrador</MenuItem>
+                        <MenuItem value={UserRole.DEALER}>Concesionaria</MenuItem>
+                        <MenuItem value={UserRole.BUYER}>Comprador</MenuItem>
+                      </Select>
+                    )}
+                  />
+                  {errors.role && (
+                    <FormHelperText>{errors.role.message}</FormHelperText>
+                  )}
+                </FormControl>
               </Box>
 
               {errors.root && (

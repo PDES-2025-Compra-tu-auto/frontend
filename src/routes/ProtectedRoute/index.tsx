@@ -6,6 +6,5 @@ export const ProtectedRoute = () => {
   
   if(isLoading)return null
   
-
   return isAuthenticated? <Outlet/> : <Navigate to={'/login'}/>;
 };

@@ -1,10 +1,13 @@
+import React from 'react';
 import Typography from '@mui/material/Typography';
-import React, { Fragment } from 'react';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 
 type Props = {
   children: React.ReactNode;
   fallback?: React.ReactNode;
-} ;
+};
 
 type State = {
   hasError: boolean;
@@ -26,23 +29,41 @@ class ErrorBoundary extends React.Component<Props, State> {
     this.setState({ error });
   }
 
+  handleLogin = () => {
+    // Aquí puedes redirigir al login. Ejemplo con window.location:
+    window.location.href = '/login';
+  };
+
   render() {
-    const { hasError, error } = this.state;
+    const { hasError } = this.state;
 
     if (hasError) {
-      return (
-        this.props.fallback ?? (
-          <Fragment>
-            <Typography variant="h2" sx={{ textAlign: 'center', marginTop: '10px' }}>
-              error
-            </Typography>
-            {error && (
-              <Typography variant="body1" sx={{ textAlign: 'center', marginTop: '10px', color: 'red' }}>
-                {error.message}
-              </Typography>
-            )}
-          </Fragment>
-        )
+      return this.props.fallback ?? (
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="flex-end"
+          height="100vh"
+          paddingBottom={8}
+          textAlign="center"
+        >
+          <ErrorOutlineIcon sx={{ fontSize: 60, color: 'red', mb: 2 }} />
+          <Typography variant="h6" gutterBottom>
+            En este momento no podemos mostrarte esta información
+          </Typography>
+          <Typography variant="body2" color="textSecondary" gutterBottom>
+            Por favor contactate con el administrador o vuelve a iniciar sesión
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.handleLogin}
+            sx={{ mt: 2 }}
+          >
+            Iniciar sesión
+          </Button>
+        </Box>
       );
     }
 

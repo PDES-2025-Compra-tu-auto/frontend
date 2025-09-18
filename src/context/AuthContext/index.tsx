@@ -1,6 +1,8 @@
+import type { UserProfile } from "@/domain/user/types";
 import type { LoginCredentials } from "@/pages/Login/validations";
 import { loginCTA } from "@/services";
-import { createContext, useEffect, useMemo, useState, type FC } from "react";
+import { refreshCTA, validateCTA } from "@/services/domain/auth";
+import { createContext, useCallback, useEffect, useMemo, useState, type FC } from "react";
 
 type AuthContextType = {
   isAuthenticated: boolean;
@@ -8,7 +10,7 @@ type AuthContextType = {
   login: (credentials: any) => Promise<any>;
   logout: () => Promise<void>;
   isLoading: boolean;
-  userProfile: any;
+  userProfile: UserProfile;
 };
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -26,31 +28,65 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(true);
     const accessToken = localStorage.getItem("accessToken");
     if (accessToken) {
-      setIsAuthenticated(true);
-      setToken(accessToken);
+      validateToken(accessToken);
+    }else{
+    setIsLoading(false)
     }
-    setIsLoading(false);
   }, []);
 
-  const getToken = async (): Promise<string | undefined> => {
-    setIsLoading(true);
-    if (isAuthenticated) {
-      setIsLoading(false);
-      return Promise.resolve(accessToken);
-    } else {
-      const token = localStorage.getItem("accessToken");
-      if (token) {
-        //refresh
+  const validateToken = (accessToken: string) => {
+    validateCTA(accessToken)
+      .then(() => {
         setIsAuthenticated(true);
-        setToken("newToken");
-        setIsLoading(false);
-        return Promise.resolve("new token");
-      }
-      setToken(token ?? undefined);
-      setIsLoading(false);
-      return Promise.resolve(token ?? undefined);
-    }
+        setToken(accessToken);
+      })
+      .catch((error) => {
+        localStorage.removeItem("accessToken");
+        throw error;
+      }).finally(()=>{
+            setIsLoading(false);
+
+      });
   };
+  
+  const getToken = useCallback(async (): Promise<string | undefined> => {
+    setIsLoading(true);
+
+    try {
+      const token = accessToken ?? localStorage.getItem("accessToken");
+
+      if (!token) {
+        setIsAuthenticated(false);
+        setToken(undefined);
+        return undefined;
+      }
+      try {
+        await validateCTA(token);
+        setIsAuthenticated(true);
+        setToken(token);
+        return token;
+      } catch {
+        try {
+          const { access_token: newToken } = await refreshCTA({ token });
+          localStorage.setItem("accessToken", newToken);
+          setIsAuthenticated(true);
+          setToken(newToken);
+          return newToken;
+        } catch (refreshError) {
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          localStorage.removeItem("userContext");
+          setIsAuthenticated(false);
+          setToken(undefined);
+          return undefined;
+        }
+      }
+    } catch (error) {
+      return undefined;
+    } finally {
+      setIsLoading(false);
+    }
+  },[isAuthenticated]);
 
   const login = async (userCredentials: LoginCredentials) => {
     try {
@@ -79,19 +115,19 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     () => JSON.parse(localStorage.getItem("userContext") || "null"),
     [localStorage]
   );
+  const contextValue = useMemo(
+    () => ({
+      isAuthenticated,
+      getToken,
+      login,
+      logout,
+      isLoading,
+      userProfile,
+    }),
+    [isAuthenticated, getToken, login, logout, isLoading, userProfile]
+  );
 
   return (
-    <AuthContext.Provider
-      value={{
-        isAuthenticated,
-        getToken,
-        login,
-        logout,
-        isLoading,
-        userProfile,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
 };

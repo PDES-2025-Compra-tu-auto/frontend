@@ -5,6 +5,7 @@ import { LandingCard } from "./components/LandingCard";
 import { Button } from "@/components/common/Button";
 
 const Landing = () => {
+
   return (
     <Box sx={{ minHeight: "100vh" }}>
       <Box
@@ -91,7 +92,6 @@ const Landing = () => {
         </Container>
       </Box>
 
-      {/* Features Section */}
       <Box sx={{ py: 10 }}>
         <Container maxWidth="lg">
           <Box sx={{ textAlign: "center", mb: 8 }}>

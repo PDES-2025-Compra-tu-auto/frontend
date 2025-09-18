@@ -49,7 +49,6 @@ export async function fetchCore({
       .join('&');
     urlWithParams = `${url}?${urlParams}`;
   }
-
   return fetch(urlWithParams, config);
 }
 

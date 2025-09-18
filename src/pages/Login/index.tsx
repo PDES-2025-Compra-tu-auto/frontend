@@ -8,6 +8,11 @@ import {
   Container,
   CardContent,
   Alert,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  FormHelperText,
 } from "@mui/material";
 import {
   DirectionsCar as CarIcon,
@@ -18,42 +23,46 @@ import {
 } from "@mui/icons-material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TextField } from "@/components/common/Textfield";
 import { Button } from "@/components/common/Button";
-import { loginSchema,type LoginFormData } from './validations'
 import { useAuth } from "@/context/AuthContext/useAuth";
+import { loginSchema, type LoginFormData } from "./validations";
+import { UserRole } from "@/domain/user/types";
 
 const Login = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const {login } = useAuth()
+  const { login } = useAuth();
   const {
     register,
     handleSubmit,
     setError,
     clearErrors,
+    control,
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
+
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     clearErrors();
-    login({...data,role:'BUYER'}).then(()=>{
-      navigate("/dashboard");
-    })
-    .catch(() => {
-      setError("root", {
-        type: "manual",
-        message: "Correo y/o contraseña incorrecta",
+    login(data)
+      .then(() => {
+        navigate("/dashboard");
       })
-  }).finally(() => {
-    setIsLoading(false);
-  }
-) 
+      .catch(() => {
+        setError("root", {
+          type: "manual",
+          message: "Correo y/o contraseña incorrecta",
+        });
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const togglePasswordVisibility = () => {
@@ -157,6 +166,31 @@ const Login = () => {
                     },
                   }}
                 />
+              </Box>
+
+              <Box sx={{ mb: 3 }}>
+                <FormControl fullWidth error={!!errors.role} disabled={isLoading}>
+                  <InputLabel id="role-label">Selecciona tu tipo de usuario</InputLabel>
+                  <Controller
+                    name="role"
+                    control={control}
+                    defaultValue={UserRole.BUYER}
+                    render={({ field }) => (
+                      <Select
+                        labelId="role-label"
+                        label="Selecciona tu tipo de usuario"
+                        {...field}
+                      >
+                        <MenuItem value={UserRole.ADMINISTRATOR}>Administrador</MenuItem>
+                        <MenuItem value={UserRole.DEALER}>Concesionaria</MenuItem>
+                        <MenuItem value={UserRole.BUYER}>Comprador</MenuItem>
+                      </Select>
+                    )}
+                  />
+                  {errors.role && (
+                    <FormHelperText>{errors.role.message}</FormHelperText>
+                  )}
+                </FormControl>
               </Box>
 
               {errors.root && (

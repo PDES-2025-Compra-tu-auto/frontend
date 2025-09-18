@@ -9,6 +9,7 @@ import { AuthProvider } from "./context/AuthContext/index.tsx";
 import ErrorBoundary from "./components/core/containers/ErrorBoundary/index.tsx";
 
 const { MODE } = import.meta.env;
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -23,22 +24,29 @@ const queryClient = new QueryClient({
     },
   },
 });
-if (MODE==="dev") {
-  import("./mocks/browser").then(({ worker }) => {
-    worker.start();
-  });
-}
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <ErrorBoundary>
-      <AuthProvider>
-        <QueryClientProvider client={queryClient}>
-          <ThemeProvider theme={muiTheme}>
-            <App />
-          </ThemeProvider>
-        </QueryClientProvider>
-      </AuthProvider>
-    </ErrorBoundary>
-  </StrictMode>
-);
+const renderApp = () => {
+  createRoot(document.getElementById("root")!).render(
+    <StrictMode>
+      <ErrorBoundary>
+        <AuthProvider>
+          <QueryClientProvider client={queryClient}>
+            <ThemeProvider theme={muiTheme}>
+              <App />
+            </ThemeProvider>
+          </QueryClientProvider>
+        </AuthProvider>
+      </ErrorBoundary>
+    </StrictMode>
+  );
+};
+
+if (MODE === "dev") {
+  import("./mocks/browser").then(({ worker }) => {
+    worker.start().then(() => {
+      renderApp();
+    });
+  });
+} else {
+  renderApp();
+}

@@ -18,7 +18,7 @@ const registerHandler =  http.post(`${BACKEND_API}/auth/register`,async({request
 
 }); 
 const validateHandler =  http.post(`${BACKEND_API}/auth/validate`,async() => {
-  return new HttpResponse({valid:true}, {status:  200 });
+  return HttpResponse.json({valid:true});
 
 });
 export const handlers = [loginHandler,registerHandler,validateHandler];
