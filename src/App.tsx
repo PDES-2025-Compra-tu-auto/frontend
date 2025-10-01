@@ -4,7 +4,8 @@ import { PublicRoute } from "./routes/PublicRoute";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Landing from "./pages/Landing";
-import { Navbar } from "./components/common/Navbar";
+import { Navbar } from "./components/core/containers/Navbar";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   return (
@@ -12,7 +13,7 @@ function App() {
       <Navbar/>
       <Routes>
         <Route element={<ProtectedRoute />}>
-          <Route path="/dashboard" element={<>Private route</>} />
+          <Route path="/dashboard" element={<Dashboard/>} />
         </Route>
 
         <Route element={<PublicRoute />}>

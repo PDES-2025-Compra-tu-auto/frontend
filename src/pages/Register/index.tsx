@@ -21,7 +21,6 @@ import {
   Email as EmailIcon,
   Lock as LockIcon,
   Person as PersonIcon,
-  AccountCircle as UsernameIcon,
 } from "@mui/icons-material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -29,43 +28,49 @@ import { TextField } from "@/components/common/Textfield";
 import { Button } from "@/components/common/Button";
 import { useForm, Controller } from "react-hook-form";
 import { UserRole } from "@/domain/user/types";
-
-type RegisterFormInputs = {
-  fullName: string;
-  username: string;
-  email: string;
-  password: string;
-  role: "ADMINISTRATOR" | "DEALER" | "BUYER";
-};
+import { registrationSchema, type RegistrationFormData } from "./validations";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { formatCuit } from "@/utils/formatters";
+import { registerCTA } from "@/services/domain/auth";
+import { Congrats } from "@/components/core/containers/Congrats";
 
 const Register = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+  const [selectedRole, setSelectedRole] = useState<UserRole>(UserRole.BUYER);
+  const [isLoggedSuccess,setSuccess] = useState(false)
   const {
     register,
     handleSubmit,
     control,
     formState: { errors },
     setError,
+    reset,
     clearErrors,
-  } = useForm<RegisterFormInputs>();
+  } = useForm<RegistrationFormData>({
+    resolver: zodResolver(registrationSchema),
+  });
 
-  const onSubmit = async (data: RegisterFormInputs) => {
+  const onSubmit = async (data: RegistrationFormData) => {
     setIsLoading(true);
     clearErrors();
-
-    setTimeout(() => {
-      console.log("Register attempt:", data);
-
+    try {
+      await registerCTA({
+        ...data,
+        concesionaryCuit: data.concesionaryCuit?.replace(/-/g, ""),
+      });
+      clearErrors();
+      reset();
+      setSuccess(true)
+    } catch (error) {
       setError("root", {
         type: "manual",
-        message: "Demo: Funcionalidad de registro pendiente de implementar",
+        message:
+          "Ha ocurrido un error en el proceso de registro. Intentá nuevamente",
       });
-
-      setIsLoading(false);
-    }, 1000);
+    }
+    setIsLoading(false);
   };
 
   const togglePasswordVisibility = () => {
@@ -81,11 +86,9 @@ const Register = () => {
         alignItems: "center",
         justifyContent: "center",
         py: 4,
-        backgroundImage:
-          "linear-gradient(135deg, hsl(220, 100%, 95%) 0%, hsl(220, 100%, 98%) 100%)",
       }}
     >
-      <Container maxWidth="sm">
+      { !isLoggedSuccess ?( <Container maxWidth="sm">
         <Box sx={{ textAlign: "center", mb: 4 }}>
           <Box
             sx={{
@@ -97,6 +100,7 @@ const Register = () => {
               bgcolor: "primary.main",
               borderRadius: "50%",
               mb: 2,
+              mt:2,
               boxShadow: "0 8px 32px hsl(220, 100%, 45%, 0.3)",
             }}
           >
@@ -123,10 +127,10 @@ const Register = () => {
                 <TextField
                   fullWidth
                   label="Nombre Completo"
-                  error={!!errors.fullName}
-                  helperText={errors.fullName?.message}
+                  error={!!errors.fullname}
+                  helperText={errors.fullname?.message}
                   disabled={isLoading}
-                  {...register("fullName", {
+                  {...register("fullname", {
                     required: "Este campo es obligatorio",
                   })}
                   slotProps={{
@@ -144,40 +148,12 @@ const Register = () => {
               <Box sx={{ mb: 3 }}>
                 <TextField
                   fullWidth
-                  label="Nombre de Usuario"
-                  error={!!errors.username}
-                  helperText={errors.username?.message}
-                  disabled={isLoading}
-                  {...register("username", {
-                    required: "Este campo es obligatorio",
-                  })}
-                  slotProps={{
-                    input: {
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <UsernameIcon sx={{ color: "text.secondary" }} />
-                        </InputAdornment>
-                      ),
-                    },
-                  }}
-                />
-              </Box>
-
-              <Box sx={{ mb: 3 }}>
-                <TextField
-                  fullWidth
                   label="Correo Electrónico"
                   type="email"
                   error={!!errors.email}
                   helperText={errors.email?.message}
                   disabled={isLoading}
-                  {...register("email", {
-                    required: "El correo es obligatorio",
-                    pattern: {
-                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                      message: "Correo no válido",
-                    },
-                  })}
+                  {...register("email")}
                   slotProps={{
                     input: {
                       startAdornment: (
@@ -196,17 +172,9 @@ const Register = () => {
                   label="Contraseña"
                   type={showPassword ? "text" : "password"}
                   error={!!errors.password}
-                  helperText={
-                    errors.password?.message || "Mínimo 4 caracteres"
-                  }
+                  helperText={errors.password?.message || "Mínimo 8 caracteres"}
                   disabled={isLoading}
-                  {...register("password", {
-                    required: "La contraseña es obligatoria",
-                    minLength: {
-                      value: 4,
-                      message: "Debe tener al menos 6 caracteres",
-                    },
-                  })}
+                  {...register("password")}
                   slotProps={{
                     input: {
                       startAdornment: (
@@ -229,11 +197,15 @@ const Register = () => {
                   }}
                 />
               </Box>
-
-              {/* Nuevo campo: Tipo de usuario */}
               <Box sx={{ mb: 3 }}>
-                <FormControl fullWidth error={!!errors.role} disabled={isLoading}>
-                  <InputLabel id="role-label">Selecciona tu tipo de usuario</InputLabel>
+                <FormControl
+                  fullWidth
+                  error={!!errors.role}
+                  disabled={isLoading}
+                >
+                  <InputLabel id="role-label">
+                    Selecciona tu tipo de usuario
+                  </InputLabel>
                   <Controller
                     name="role"
                     control={control}
@@ -244,9 +216,14 @@ const Register = () => {
                         labelId="role-label"
                         label="Selecciona tu tipo de usuario"
                         {...field}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          setSelectedRole(e.target.value as UserRole);
+                        }}
                       >
-                        <MenuItem value={UserRole.ADMINISTRATOR}>Administrador</MenuItem>
-                        <MenuItem value={UserRole.DEALER}>Concesionaria</MenuItem>
+                        <MenuItem value={UserRole.CONCESIONARY}>
+                          Concesionaria
+                        </MenuItem>
                         <MenuItem value={UserRole.BUYER}>Comprador</MenuItem>
                       </Select>
                     )}
@@ -256,6 +233,57 @@ const Register = () => {
                   )}
                 </FormControl>
               </Box>
+
+              {selectedRole === UserRole.CONCESIONARY && (
+                <>
+                  <Box sx={{ mb: 3 }}>
+                    <Controller
+                      name="concesionaryCuit"
+                      control={control}
+                      rules={{
+                        required: "El CUIT es obligatorio",
+                        pattern: {
+                          value: /^\d{2}-\d{8}-\d{1}$/,
+                          message: "Formato inválido. Ej: 20-12345678-3",
+                        },
+                      }}
+                      render={({ field, fieldState }) => (
+                        <TextField
+                          {...field}
+                          label="CUIT de Concesionaria"
+                          error={!!fieldState.error}
+                          helperText={fieldState.error?.message}
+                          inputMode="numeric"
+                          onChange={(e) => {
+                            const formatted = formatCuit(e.target.value);
+                            field.onChange(formatted);
+                          }}
+                          slotProps={{
+                            input: {
+                              inputProps: {
+                                maxLength: 13,
+                              },
+                            },
+                          }}
+                          fullWidth
+                        />
+                      )}
+                    />
+                  </Box>
+
+                  {/* Nombre de Concesionaria */}
+                  <Box sx={{ mb: 3 }}>
+                    <TextField
+                      fullWidth
+                      label="Nombre de Concesionaria"
+                      error={!!errors.concesionaryName}
+                      helperText={errors.concesionaryName?.message}
+                      disabled={isLoading}
+                      {...register("concesionaryName")}
+                    />
+                  </Box>
+                </>
+              )}
 
               {errors.root && (
                 <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}>
@@ -315,7 +343,25 @@ const Register = () => {
             ← Volver al inicio
           </Button>
         </Box>
-      </Container>
+      </Container>):(
+
+              <Congrats
+        title="Tu usuario se registro correctamente"
+        subtitle="Ya podes ingresar a la aplicacion y disfrutar la experiencia unica que ofrecemos"
+      >
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          disabled={isLoading}
+          sx={{pr:'16px',pl:'16px'}}
+          onClick={() => navigate("/login")}
+        >
+          Inicia sesion
+        </Button>
+      </Congrats>
+      )}
+
     </Box>
   );
 };

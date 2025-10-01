@@ -7,7 +7,7 @@ import {
 } from "@tanstack/react-query";
 import { useMemo } from "react";
 
-export function useCraMutation<T, P>(
+export function useCtaMutation<T, P>(
   fetch: (params?: P) => FetchServiceEndpoint<T>,
   config?: UseMutationOptions<T, FetchError<T>, P>
 ): UseMutationResult<T, FetchError<T>, P> {

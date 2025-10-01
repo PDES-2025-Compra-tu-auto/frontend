@@ -1,3 +1,8 @@
+import type { UserRole } from "@/domain/user/types";
+import { tokens } from "../utils";
+
+
+
 export const registerResponse = ({
   role,
   email,
@@ -12,10 +17,12 @@ export const registerResponse = ({
     createdAt: "2025-09-10T23:08:44.204Z",
   };
 };
-export const loginResponseJson = {
-  access_token:
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwMWE1MmJiMi05OTNiLTQzNWMtYjQxZi01MTIzMzQwYThkOGMiLCJyb2xlIjoiQlVZRVIiLCJpYXQiOjE3NTc1NDc4NzIsImV4cCI6MTc1NzU1MTQ3Mn0.Ha5Y2ch1aPAhtUJkAzghCK2obVBBkLvqOTwN0BKT9y0",
+export const loginResponseJson=(role:UserRole) =>( {
+  accessToken: tokens[role].accessToken,
   expiresAt: 1757551472,
-  refresh_token:
+  role: role,
+  email: `${role.toLowerCase()}@gmail.com`,
+  fullname: `Diego ${role.toLowerCase()}`,
+  refreshToken:
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwMWE1MmJiMi05OTNiLTQzNWMtYjQxZi01MTIzMzQwYThkOGMiLCJyb2xlIjoiQlVZRVIiLCJpYXQiOjE3NTc1NDc4NzIsImV4cCI6MTc1NzU2OTQ3Mn0.pUd78xuSkOhtUeOph_3_yzVgEMap2E26iEGl9QIz7l8",
-};
+});

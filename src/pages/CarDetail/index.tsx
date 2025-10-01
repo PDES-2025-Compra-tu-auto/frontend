@@ -13,10 +13,8 @@ import {
   Menu,
   MenuItem,
   Stack,
-  Divider,
   List,
   ListItem,
-  ListItemIcon,
   ListItemText
 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -26,7 +24,6 @@ import {
   Speed as SpeedIcon,
   LocalGasStation as FuelIcon,
   Settings as SettingsIcon,
-  CalendarToday as CalendarIcon,
   LocationOn as LocationIcon,
   AccountCircle as AccountCircleIcon,
   CheckCircle as CheckIcon,

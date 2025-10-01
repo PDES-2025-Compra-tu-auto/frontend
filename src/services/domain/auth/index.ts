@@ -1,9 +1,7 @@
 import type { LoginCredentials } from "@/pages/Login/validations";
 import {  fetchJson } from "@/utils/fetch/httpService";
 import { BACKEND_API } from "../constants";
-import type { LoginResponse } from "./types";
-
-
+import type { LoginResponse, RefreshResponse, RegisterCredentials, RegisterResponse, ValidateResponse } from "./types";
 
 
 export const loginCTA = async (credentials: LoginCredentials): Promise<LoginResponse> => {
@@ -17,8 +15,8 @@ export const loginCTA = async (credentials: LoginCredentials): Promise<LoginResp
   return response;
 };
 
-export const registerCTA = async (credentials: LoginCredentials): Promise<LoginResponse> => {
-  const response = await fetchJson<LoginResponse>({
+export const registerCTA = async (credentials: RegisterCredentials): Promise<RegisterResponse> => {
+  const response = await fetchJson<RegisterResponse>({
     url: `${BACKEND_API}/auth/register`,
     method: 'POST',
     data: credentials,
@@ -29,8 +27,8 @@ export const registerCTA = async (credentials: LoginCredentials): Promise<LoginR
 };
 
 
-export const validateCTA = async (accessToken:string): Promise<{valid:boolean}> => {
-  const response = await fetchJson<{valid:boolean}>({
+export const validateCTA = async (accessToken:string): Promise<ValidateResponse> => {
+  const response = await fetchJson<ValidateResponse>({
     url: `${BACKEND_API}/auth/validate`,
     method: 'POST',
     accessToken,
@@ -39,8 +37,8 @@ export const validateCTA = async (accessToken:string): Promise<{valid:boolean}> 
   return response;
 };
 
-export const refreshCTA = async (refresh:{token:string}): Promise<{access_token:string}> => {
-  const response = await fetchJson<{access_token:string}>({
+export const refreshCTA = async (refresh:{token:string}): Promise<RefreshResponse> => {
+  const response = await fetchJson<RefreshResponse>({
     url: `${BACKEND_API}/auth/refresh`,
     method: 'POST',
     data:refresh,

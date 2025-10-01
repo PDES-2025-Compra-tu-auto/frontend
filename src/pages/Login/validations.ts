@@ -9,9 +9,8 @@ export const loginSchema = z.object({
     }),
   password: z
     .string()
-    .min(4, 'La contraseña debe tener al menos 4 caracteres')
+    .min(8, 'La contraseña debe tener al menos 8 caracteres')
     .nonempty('La contraseña es obligatoria'),
-  role: z.enum(['BUYER','DEALER','ADMINISTRATOR'])
 });
 
 export type LoginFormData = z.infer<typeof loginSchema>;

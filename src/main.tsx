@@ -4,9 +4,9 @@ import "./index.css";
 import App from "./App.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@mui/material/styles";
-import { muiTheme } from "./theme/index.ts";
-import { AuthProvider } from "./context/AuthContext/index.tsx";
-import ErrorBoundary from "./components/core/containers/ErrorBoundary/index.tsx";
+import { muiTheme } from "./theme";
+import { AuthProvider } from "./context/AuthContext";
+import ErrorBoundary from "./components/core/containers/ErrorBoundary";
 
 const { MODE } = import.meta.env;
 

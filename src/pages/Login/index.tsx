@@ -8,11 +8,6 @@ import {
   Container,
   CardContent,
   Alert,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  FormHelperText,
 } from "@mui/material";
 import {
   DirectionsCar as CarIcon,
@@ -23,13 +18,12 @@ import {
 } from "@mui/icons-material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TextField } from "@/components/common/Textfield";
 import { Button } from "@/components/common/Button";
 import { useAuth } from "@/context/AuthContext/useAuth";
 import { loginSchema, type LoginFormData } from "./validations";
-import { UserRole } from "@/domain/user/types";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -41,7 +35,6 @@ const Login = () => {
     handleSubmit,
     setError,
     clearErrors,
-    control,
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -77,9 +70,7 @@ const Login = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        backgroundImage:
-          "linear-gradient(135deg, hsl(220, 100%, 95%) 0%, hsl(220, 100%, 98%) 100%)",
-      }}
+           }}
     >
       <Container maxWidth="sm">
         <Box sx={{ textAlign: "center", mb: 4 }}>
@@ -93,6 +84,7 @@ const Login = () => {
               bgcolor: "primary.main",
               borderRadius: "50%",
               mb: 2,
+              mt:2,
               boxShadow: "0 8px 32px hsl(220, 100%, 45%, 0.3)",
             }}
           >
@@ -167,32 +159,6 @@ const Login = () => {
                   }}
                 />
               </Box>
-
-              <Box sx={{ mb: 3 }}>
-                <FormControl fullWidth error={!!errors.role} disabled={isLoading}>
-                  <InputLabel id="role-label">Selecciona tu tipo de usuario</InputLabel>
-                  <Controller
-                    name="role"
-                    control={control}
-                    defaultValue={UserRole.BUYER}
-                    render={({ field }) => (
-                      <Select
-                        labelId="role-label"
-                        label="Selecciona tu tipo de usuario"
-                        {...field}
-                      >
-                        <MenuItem value={UserRole.ADMINISTRATOR}>Administrador</MenuItem>
-                        <MenuItem value={UserRole.DEALER}>Concesionaria</MenuItem>
-                        <MenuItem value={UserRole.BUYER}>Comprador</MenuItem>
-                      </Select>
-                    )}
-                  />
-                  {errors.role && (
-                    <FormHelperText>{errors.role.message}</FormHelperText>
-                  )}
-                </FormControl>
-              </Box>
-
               {errors.root && (
                 <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}>
                   {errors.root.message}

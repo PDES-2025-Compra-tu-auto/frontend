@@ -20,6 +20,9 @@ export default defineConfig(({ mode }) => {
     test: {
       include: ['./src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
       globals: true,
+      environment: 'jsdom',
+      setupFiles: ['./src/setup.ts'],
+  
       coverage: {
         providers: ['v8'],
         reporters: ['text', 'html', 'lcov', 'json'],

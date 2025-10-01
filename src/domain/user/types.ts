@@ -1,10 +1,10 @@
 export enum UserRole {
     ADMINISTRATOR = 'ADMINISTRATOR',
     BUYER = 'BUYER',
-    DEALER = 'DEALER'
+    CONCESIONARY = 'CONCESIONARY'
 }
 export interface UserProfile {
-    fullName:string,
+    fullname:string,
     email: string ,
     role: UserRole
 }

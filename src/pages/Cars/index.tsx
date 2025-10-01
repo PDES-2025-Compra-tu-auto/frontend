@@ -23,12 +23,9 @@ import {
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { 
   Search as SearchIcon, 
-  FilterList as FilterIcon,
   DirectionsCar as CarIcon,
   Speed as SpeedIcon,
   LocalGasStation as FuelIcon,
-  Settings as SettingsIcon,
-  AccountCircle as AccountCircleIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
@@ -211,7 +208,6 @@ export default function Explore() {
               onClick={handleMenuOpen}
               color="inherit"
             >
-              <AccountCircleIcon />
             </IconButton>
             <Menu
               id="menu-appbar"

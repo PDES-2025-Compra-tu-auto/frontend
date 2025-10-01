@@ -3,9 +3,10 @@ import { DirectionsCar, Security, People, Star } from "@mui/icons-material";
 import heroImage from "@/assets/cars.jpg";
 import { LandingCard } from "./components/LandingCard";
 import { Button } from "@/components/common/Button";
+import { useNavigate } from "react-router-dom";
 
 const Landing = () => {
-
+  const navigate = useNavigate()
   return (
     <Box sx={{ minHeight: "100vh" }}>
       <Box
@@ -85,8 +86,9 @@ const Landing = () => {
                 fontSize: "1.125rem",
                 textTransform: "uppercase",
               }}
+              onClick={()=>{navigate('/login')}}
             >
-              Explorar Autos
+              Entrá y explorá
             </Button>
           </Box>
         </Container>

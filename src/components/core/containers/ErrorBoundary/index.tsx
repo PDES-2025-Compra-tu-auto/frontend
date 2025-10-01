@@ -1,8 +1,8 @@
-import React from 'react';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import React from "react";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import { Grid } from "@mui/material";
 
 type Props = {
   children: React.ReactNode;
@@ -25,45 +25,47 @@ class ErrorBoundary extends React.Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('Error caught by ErrorBoundary:', error, errorInfo);
+    console.error("Error caught by ErrorBoundary:", error, errorInfo);
     this.setState({ error });
   }
 
   handleLogin = () => {
     // Aquí puedes redirigir al login. Ejemplo con window.location:
-    window.location.href = '/login';
+    window.location.href = "/login";
   };
 
   render() {
     const { hasError } = this.state;
 
     if (hasError) {
-      return this.props.fallback ?? (
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="flex-end"
-          height="100vh"
-          paddingBottom={8}
-          textAlign="center"
-        >
-          <ErrorOutlineIcon sx={{ fontSize: 60, color: 'red', mb: 2 }} />
-          <Typography variant="h6" gutterBottom>
-            En este momento no podemos mostrarte esta información
-          </Typography>
-          <Typography variant="body2" color="textSecondary" gutterBottom>
-            Por favor contactate con el administrador o vuelve a iniciar sesión
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={this.handleLogin}
-            sx={{ mt: 2 }}
+      return (
+        this.props.fallback ?? (
+          <Grid
+            container
+            direction="column"
+            justifyContent="center"
+            alignItems="center"
+            textAlign="center"
+            sx={{ minHeight: "100vh" }}
           >
-            Iniciar sesión
-          </Button>
-        </Box>
+            <ErrorOutlineIcon sx={{ fontSize: 60, color: "red", mb: 2 }} />
+            <Typography variant="h6" gutterBottom>
+              En este momento no podemos mostrarte esta información
+            </Typography>
+            <Typography variant="body2" color="textSecondary" gutterBottom>
+              Por favor contactate con el administrador o vuelve a iniciar
+              sesión
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.handleLogin}
+              sx={{ mt: 2 }}
+            >
+              Iniciar sesión
+            </Button>
+          </Grid>
+        )
       );
     }
 

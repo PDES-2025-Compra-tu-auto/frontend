@@ -1,7 +1,9 @@
 FROM node:22-alpine AS build
 WORKDIR /app
 COPY package.json .
-RUN npm install 
+RUN npm install --silent
+ARG FE_BACKEND_URL
+ENV FE_BACKEND_URL=$FE_BACKEND_URL
 COPY . .
 RUN npm run build
 FROM nginx:alpine
