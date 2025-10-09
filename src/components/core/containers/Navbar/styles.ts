@@ -52,11 +52,6 @@ export const UserButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-export const UserButtonInnerBox = styled(Box)({
-  display: "flex",
-  alignItems: "center",
-  gap: 8,
-});
 
 export const MenuPaper = {
   boxShadow: "0 10px 30px -10px rgba(0, 102, 255, 0.3)",

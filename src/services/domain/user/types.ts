@@ -19,3 +19,14 @@ export interface UserResponseDto {
 
   createdAt: Date;
 }
+
+
+export enum StatusUser {
+  ACTIVE = 'ACTIVE',
+  INACTIVE= 'INACTIVE'
+}
+export interface UpdateUserDto { 
+  fullname?: string 
+  email?: string
+  status?: StatusUser
+}

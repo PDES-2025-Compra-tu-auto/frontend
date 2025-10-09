@@ -1,6 +1,6 @@
-import { http, HttpResponse } from "msw";
+import { delay, http, HttpResponse } from "msw";
 import { matchRoleToken } from "../utils";
-import { me, profile } from "../data/user";
+import { me, profile, update } from "../data/user";
 
 export const BACKEND_API = import.meta.env.FE_BACKEND_API;
 
@@ -21,4 +21,12 @@ const profileHandler = http.get(
   }
 );
 
-export const userHandlers = [profileHandler,meHandler];
+const updateHandler = http.patch(
+  `${BACKEND_API}/users`,
+  async () => {
+    await delay(2000)
+    return HttpResponse.json(update,{status:200});
+  }
+);
+
+export const userHandlers = [profileHandler,meHandler,updateHandler];

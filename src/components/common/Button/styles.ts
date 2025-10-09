@@ -1,15 +1,17 @@
-import { Button, styled } from "@mui/material";
+import { Button, styled, type ButtonProps } from "@mui/material";
 
-export const StyledButton = styled(Button)(({theme,variant}) => ({
+interface StyledButtonProps extends ButtonProps {
+  withBackground?: boolean;
+}
+
+export const StyledButton = styled(Button,{ shouldForwardProp: (prop) => prop !== 'withBackground'})<StyledButtonProps>(({ variant, withBackground = true }) => ({
   padding: '0.5em 5px 0.5em 5px',
   marginBottom:3,
   borderRadius: 8,
   fontSize: "1.1rem",
   fontWeight: "bold",
   textTransform: "none",
-
-  background:
-    "linear-gradient(135deg, hsl(220, 100%, 45%) 0%, hsl(220, 100%, 35%) 100%)",
+  background: withBackground? "linear-gradient(135deg, hsl(220, 100%, 45%) 0%, hsl(220, 100%, 35%) 100%)":'',
   boxShadow: "0 8px 24px hsl(220, 100%, 45%, 0.3)",
   "&:hover": {
     boxShadow: "0 12px 32px hsl(220, 100%, 45%, 0.4)",
@@ -34,14 +36,11 @@ export const StyledButton = styled(Button)(({theme,variant}) => ({
   border: 1,
   borderStyle:'solid',
   borderRadius: 8,
-  borderColor: theme.palette.common.white,
-  color: theme.palette.common.white,
   marginBottom:3,
   fontSize: "1.1rem",
   fontWeight: "bold",
   textTransform: "none",
   background:'transparent',
-  boxShadow: "0 8px 24px hsl(220, 100%, 45%, 0.3)",
   "&:hover": {
     boxShadow: "0 12px 32px hsl(220, 100%, 45%, 0.4)",
  

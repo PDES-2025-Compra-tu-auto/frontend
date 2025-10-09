@@ -16,6 +16,11 @@ const buyerProfile = [
   },
 ];
 const concesionaryProfile = [
+    {
+    id: 'create-sale-car',
+    title: 'Publicar venta',
+    description: 'Agregá un auto para la venta',
+  },
   {
     id: "manage-cars",
     title: "Gestión de autos",

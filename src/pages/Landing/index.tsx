@@ -85,6 +85,7 @@ const Landing = () => {
                 py: 1.5,
                 fontSize: "1.125rem",
                 textTransform: "uppercase",
+                color: 'white'
               }}
               onClick={()=>{navigate('/login')}}
             >
@@ -175,19 +176,19 @@ const Landing = () => {
               color: "primary.main",
               "&:hover": { bgcolor: "grey.100" },
             }}
+            onClick={()=>navigate('/register')}
           >
             Crear Cuenta Gratis
           </Button>
         </Container>
       </Box>
 
-      {/* Footer */}
       <Box sx={{ color: "white", py: 6, bgcolor: "rgb(51, 65, 85)" }}>
         <Container maxWidth="lg">
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "repeat(4, 1fr)" },
+              gridTemplateColumns: { xs: "1fr", md: "repeat(2, 1fr)" },
               gap: 4,
             }}
           >
@@ -205,104 +206,6 @@ const Landing = () => {
                 toda la región.
               </Typography>
             </Box>
-
-            <Box>
-              <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-                Servicios
-              </Typography>
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                <Button
-                   variant="text"
-                  sx={{
-                    color: "rgba(255, 255, 255, 0.7)",
-                    justifyContent: "flex-start",
-                    
-                  }}
-                  disableFocusRipple
-                >
-                  Comprar Auto
-                </Button>
-                <Button
-                  variant="text"
-                  sx={{
-                    color: "rgba(255, 255, 255, 0.7)",
-                    justifyContent: "flex-start",
-                  }}
-                  disableFocusRipple
-                >
-                  Vender Auto
-                </Button>
-                <Button
-                  variant="text"
-                  sx={{
-                    color: "rgba(255, 255, 255, 0.7)",
-                    justifyContent: "flex-start",
-                  }}
-                  disableFocusRipple
-                >
-                  Financiamiento
-                </Button>
-                <Button
-                  variant="text"
-                  sx={{
-                    color: "rgba(255, 255, 255, 0.7)",
-                    justifyContent: "flex-start",
-                  }}
-                  disableFocusRipple
-                >
-                  Seguro
-                </Button>
-              </Box>
-            </Box>
-
-            <Box>
-              <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-                Agencias
-              </Typography>
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                <Button
-                  variant="text"
-                  sx={{
-                    color: "rgba(255, 255, 255, 0.7)",
-                    justifyContent: "flex-start",
-                  }}
-                  disableFocusRipple
-                >
-                  Registrar Agencia
-                </Button>
-                <Button
-                  variant="text"
-                  sx={{
-                    color: "rgba(255, 255, 255, 0.7)",
-                    justifyContent: "flex-start",
-                  }}
-                  disableFocusRipple
-                >
-                  Panel de Control
-                </Button>
-                <Button
-                  variant="text"
-                  sx={{
-                    color: "rgba(255, 255, 255, 0.7)",
-                    justifyContent: "flex-start",
-                  }}
-                  disableFocusRipple
-                >
-                  Herramientas
-                </Button>
-                <Button
-                  variant="text"
-                  sx={{
-                    color: "rgba(255, 255, 255, 0.7)",
-                    justifyContent: "flex-start",
-                  }}
-                  disableFocusRipple
-                >
-                  Soporte
-                </Button>
-              </Box>
-            </Box>
-
             <Box>
               <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
                 Contacto

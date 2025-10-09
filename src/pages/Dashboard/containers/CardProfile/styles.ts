@@ -8,14 +8,13 @@ export const StyledCard = styled(Card)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   height: "100%",
-  borderRadius: theme.spacing(1),
+  borderRadius: theme.spacing(1.5),
   backgroundColor: "#ffffff",
   boxShadow: "0 6px 20px rgba(0, 0, 0, 0.05)",
-  transition: "all 0.3s ease",
   cursor: "pointer",
   "&:hover": {
     boxShadow: "0 12px 24px rgba(0, 0, 0, 0.08)",
-    transform: "translateY(-4px)",
+    border: '3px solid #0066ff ',
   },
 }));
 

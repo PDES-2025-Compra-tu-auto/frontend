@@ -7,6 +7,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import { muiTheme } from "./theme";
 import { AuthProvider } from "./context/AuthContext";
 import ErrorBoundary from "./components/core/containers/ErrorBoundary";
+import { ToastContainer } from 'react-toastify';
 
 const { MODE } = import.meta.env;
 
@@ -32,6 +33,18 @@ const renderApp = () => {
         <AuthProvider>
           <QueryClientProvider client={queryClient}>
             <ThemeProvider theme={muiTheme}>
+                <ToastContainer
+                position="bottom-center"
+                autoClose={1500}
+                hideProgressBar={false}
+                newestOnTop={true}
+                closeOnClick
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+                style={{ zIndex: 9999, fontSize: '0.8rem',fontWeight: '400' }}
+              />
               <App />
             </ThemeProvider>
           </QueryClientProvider>

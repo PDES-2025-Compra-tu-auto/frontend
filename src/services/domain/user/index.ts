@@ -1,7 +1,7 @@
 import { fetchJson } from "@/utils/fetch/httpService";
 import { BACKEND_API } from "../constants";
 import type { FetchServiceEndpoint } from "@/utils/fetch/types";
-import type { UserDashboardDto, UserResponseDto } from "./types";
+import type { UpdateUserDto, UserDashboardDto, UserResponseDto } from "./types";
 
 export const profileCTA = (
   id?: string
@@ -32,6 +32,7 @@ export const myUser = (id?: string): FetchServiceEndpoint<UserResponseDto> => {
 };
 
 export const updateUser = (
+  data: UpdateUserDto,
   id?: string
 ): FetchServiceEndpoint<{
   message: string;
@@ -42,9 +43,10 @@ export const updateUser = (
       fetchJson<{
         message: string;
       }>({
-        url: `${BACKEND_API}/user`,
+        url: `${BACKEND_API}/users`,
         method: "PATCH",
         withCredentials: false,
+        data,
         ...options,
       }).then((res) => res),
   };

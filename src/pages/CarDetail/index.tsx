@@ -1,416 +1,379 @@
-import React, { useState } from 'react';
-import { 
-  Box, 
-  Container, 
-  Typography, 
-  Button, 
-  Card, 
-  CardMedia, 
-  Chip,
-  AppBar,
-  Toolbar,
-  IconButton,
-  Menu,
-  MenuItem,
+import { useState } from "react";
+import {
+  Box,
+  Typography,
+  Card,
+  CardMedia,
   Stack,
-  List,
-  ListItem,
-  ListItemText
-} from '@mui/material';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { 
-  ArrowBack as ArrowBackIcon,
-  DirectionsCar as CarIcon,
-  Speed as SpeedIcon,
-  LocalGasStation as FuelIcon,
-  Settings as SettingsIcon,
-  LocationOn as LocationIcon,
-  AccountCircle as AccountCircleIcon,
-  CheckCircle as CheckIcon,
-  Phone as PhoneIcon,
-  Email as EmailIcon
-} from '@mui/icons-material';
-import { useNavigate, useParams } from 'react-router-dom';
+  Divider,
+  IconButton,
+  TextField,
+  Grid,
+} from "@mui/material";
+import {
+  Email as EmailIcon,
+  Star as StarIcon,
+  StarBorder as StarBorderIcon,
+  Favorite,
+  FavoriteBorder,
+} from "@mui/icons-material";
+import { useNavigate, useParams } from "react-router-dom";
+import { Button } from "@/components/common/Button";
+import { useCtaQuery } from "@/hooks/useCtaQuery";
+import { getSaleCar } from "@/services/domain/cars";
+import { Breadcrumbs } from "@/components/common/Breadcrumb";
+import {
+  reviewByModelCar,
+  addReviewToModelCar,
+} from "@/services/domain/reviews";
+import { useCtaMutation } from "@/hooks/useCtaMutation";
+import { addSaleCarToFavourite } from "@/services/domain/favourites";
+import { toast } from "react-toastify";
+import type {
+  AddReview,
+  ReviewResponse,
+} from "@/services/domain/reviews/types";
 
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: 'hsl(220, 100%, 45%)', // automotive-blue
-    },
-    secondary: {
-      main: 'hsl(220, 20%, 20%)', // automotive-dark
-    },
-    background: {
-      default: 'hsl(0, 0%, 100%)', // background
-      paper: 'hsl(0, 0%, 100%)', // card
-    },
-    text: {
-      primary: 'hsl(222.2, 84%, 4.9%)', // foreground
-      secondary: 'hsl(220, 10%, 46%)', // automotive-gray
-    },
-  },
-  typography: {
-    fontFamily: '"Inter", system-ui, sans-serif',
-    h4: {
-      fontWeight: 700,
-      fontSize: '2rem',
-    },
-    h6: {
-      fontWeight: 600,
-      fontSize: '1.25rem',
-    },
-  },
-});
-
-// Mock data for car details (in a real app, this would come from an API)
-const mockCarDetails = {
-  1: {
-    id: 1,
-    brand: 'BMW',
-    model: 'Serie 3',
-    year: 2023,
-    price: 45000,
-    mileage: 15000,
-    fuel: 'Gasolina',
-    transmission: 'Automática',
-    images: [
-      '/api/placeholder/800/600',
-      '/api/placeholder/800/600',
-      '/api/placeholder/800/600'
-    ],
-    description: 'Sedan de lujo con excelente rendimiento y comodidad. Este BMW Serie 3 combina deportividad y elegancia en cada detalle.',
-    location: 'Madrid',
-    features: [
-      'Sistema de navegación GPS',
-      'Asientos de cuero',
-      'Control de crucero adaptativo',
-      'Sistema de sonido premium',
-      'Cámara de reversa',
-      'Sensores de aparcamiento',
-      'Bluetooth y USB',
-      'Control de clima automático'
-    ],
-    specifications: {
-      motor: '2.0L Turbo',
-      potencia: '255 HP',
-      consumo: '7.5L/100km',
-      color: 'Negro Metálico',
-      puertas: 4,
-      plazas: 5,
-      maletero: '480L'
-    },
-    seller: {
-      name: 'AutoConcesionario Madrid',
-      phone: '+34 91 123 4567',
-      email: 'ventas@autoconcesionario.com',
-      type: 'Concesionario Oficial'
-    }
-  }
-};
-
-export default function CarDetail() {
-  const navigate = useNavigate();
+const CarDetail = () => {
   const { id } = useParams();
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [selectedImage, setSelectedImage] = useState(0);
+  const [selectedImage, setSelectedImage] = useState("");
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [reviewScore, setReviewScore] = useState<number>(0);
+  const [reviewComment, setReviewComment] = useState<string>("");
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const navigate = useNavigate();
 
-  const car = mockCarDetails[Number(id) as keyof typeof mockCarDetails] || mockCarDetails[1];
+  const { data: car } = useCtaQuery(() => getSaleCar(id as string), {
+    enabled: !!id,
+  });
 
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+  const { data: reviews } = useCtaQuery(
+    () => reviewByModelCar(car?.modelCar?.id || ""),
+    { enabled: !!car }
+  );
+
+  const addToFavMutation = useCtaMutation<any, { saleCarId: string }>((data) =>
+    addSaleCarToFavourite(data!)
+  );
+
+  const createReviewMutation = useCtaMutation<ReviewResponse, AddReview>(
+    (data) => addReviewToModelCar(data!)
+  );
+
+  const breadcrumbItems = [
+    {
+      label: "Inicio",
+      onClick: () => navigate("/dashboard"),
+    },
+    { label: "Autos", onClick: () => navigate("/cars") },
+    { label: "Detalle", enabled: true },
+  ];
+
+  const toggleFavorite = (saleCarId: string) => {
+    setIsFavorite((prev) => !prev);
+    addToFavMutation
+      .mutateAsync({ saleCarId })
+      .then(() => toast.success("Vehiculo agregado a favoritos"))
+      .catch(() => {
+        toast.error("Ha ocurrido un error al agregar el vehiculo a favoritos");
+        setIsFavorite((prev) => !prev);
+      });
   };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
+  const handleSubmitReview = () => {
+    if (
+      !reviewComment ||
+      reviewScore <= 0 ||
+      reviewScore > 10 ||
+      !car?.modelCar?.id
+    ) {
+      toast.error("Por favor escribi algo para enviar como comentario.");
+      return;
+    }
 
-  const handleBack = () => {
-    navigate('/explore');
+    setIsSubmittingReview(true);
+
+    createReviewMutation
+      .mutateAsync({
+        modelCarId: car.modelCar.id,
+        score: reviewScore,
+        comment: reviewComment,
+      })
+      .then(() => {
+        toast.success("¡Reseña enviada con éxito!");
+        setReviewComment("");
+        setReviewScore(0);
+      })
+      .catch(() => {
+        toast.error("Ocurrió un error al enviar la reseña.");
+      })
+      .finally(() => {
+        setIsSubmittingReview(false);
+      });
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-        {/* Header */}
-        <AppBar position="static" sx={{ bgcolor: 'primary.main' }}>
-          <Toolbar>
-            <IconButton 
-              edge="start" 
-              color="inherit" 
-              sx={{ mr: 2 }}
-              onClick={handleBack}
-            >
-              <ArrowBackIcon />
-            </IconButton>
-            <IconButton 
-              color="inherit" 
-              sx={{ mr: 2 }}
-              onClick={() => navigate('/')}
-            >
-              <CarIcon />
-            </IconButton>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
-              AutoMarket
-            </Typography>
-            <IconButton
-              size="large"
-              edge="end"
-              aria-label="account"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleMenuOpen}
-              color="inherit"
-            >
-              <AccountCircleIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorEl}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorEl)}
-              onClose={handleMenuClose}
-            >
-              <MenuItem onClick={handleMenuClose}>Iniciar Sesión</MenuItem>
-              <MenuItem onClick={handleMenuClose}>Registrarse</MenuItem>
-              <MenuItem onClick={handleMenuClose}>Registrar Agencia</MenuItem>
-            </Menu>
-          </Toolbar>
-        </AppBar>
+    <Grid
+      container
+      flexDirection="column"
+      sx={{
+        px: { xs: 3, md: 8 },
+        py: { xs: 4, md: 6 },
+        bgcolor: "background.default",
+      }}
+    >
+      <Grid  sx={{ py: 1 }}>
+        <Breadcrumbs items={breadcrumbItems} />
 
-        <Container maxWidth="xl" sx={{ py: 4 }}>
-          <Box sx={{ 
-            display: 'grid', 
-            gridTemplateColumns: { xs: '1fr', md: '2fr 1fr' }, 
-            gap: 4 
-          }}>
-            {/* Image Gallery */}
-            <Box>
-              <Card sx={{ mb: 2 }}>
-                <CardMedia
-                  component="img"
-                  height="500"
-                  image={car.images[selectedImage]}
-                  alt={`${car.brand} ${car.model}`}
-                  sx={{ bgcolor: 'grey.200' }}
-                />
-              </Card>
-              <Box sx={{ 
-                display: 'grid', 
-                gridTemplateColumns: 'repeat(3, 1fr)', 
-                gap: 1 
-              }}>
-                {car.images.map((image, index) => (
-                  <Card 
-                    key={index}
-                    sx={{ 
-                      cursor: 'pointer',
-                      border: selectedImage === index ? 2 : 0,
-                      borderColor: 'primary.main'
-                    }}
-                    onClick={() => setSelectedImage(index)}
-                  >
-                    <CardMedia
-                      component="img"
-                      height="120"
-                      image={image}
-                      alt={`${car.brand} ${car.model} ${index + 1}`}
-                      sx={{ bgcolor: 'grey.200' }}
-                    />
-                  </Card>
-                ))}
-              </Box>
+        <Box
+          sx={{
+            pt: 4,
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr", md: "2fr 1fr" },
+            gap: 4,
+          }}
+        >
+          <Box>
+            <Card sx={{ mb: 2 }}>
+              <CardMedia
+                component="img"
+                height="500"
+                loading="lazy"
+                image={
+                  selectedImage || car?.modelCar.imageUrl || "/fallback.jpg"
+                }
+                alt={`${car?.modelCar.brand} ${car?.modelCar.model}`}
+                sx={{ bgcolor: "grey.200" }}
+              />
+            </Card>
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: "repeat(3, 1fr)",
+                gap: 1,
+              }}
+            >
+              {[car?.modelCar].map((modelCar) => (
+                <Card
+                  key={id}
+                  sx={{
+                    cursor: "pointer",
+                    border: selectedImage === modelCar?.imageUrl ? 2 : 0,
+                    borderColor: "primary.main",
+                  }}
+                  onClick={() => setSelectedImage(modelCar?.imageUrl || "")}
+                >
+                  <CardMedia
+                    component="img"
+                    height="120"
+                    image={car?.modelCar.imageUrl}
+                    alt={`${car?.modelCar.brand} ${car?.modelCar.model}`}
+                    sx={{ bgcolor: "grey.200" }}
+                  />
+                </Card>
+              ))}
             </Box>
-
-            {/* Car Information */}
-            <Box>
-              <Card sx={{ p: 3, mb: 3 }}>
-                <Typography variant="h4" sx={{ mb: 1, fontWeight: 'bold' }}>
-                  {car.brand} {car.model}
+          </Box>
+          <Box>
+            <Card sx={{ p: 3, mb: 3 }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  mb: 1,
+                }}
+              >
+                <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+                  {car?.modelCar.brand} {car?.modelCar.model}
                 </Typography>
-                <Typography variant="h6" sx={{ mb: 2, color: 'text.secondary' }}>
-                  {car.year}
-                </Typography>
-                
-                <Stack direction="row" spacing={1} sx={{ mb: 3 }}>
-                  <Chip 
-                    icon={<SpeedIcon />} 
-                    label={`${car.mileage.toLocaleString()} km`} 
-                    variant="outlined"
-                  />
-                  <Chip 
-                    icon={<FuelIcon />} 
-                    label={car.fuel} 
-                    variant="outlined"
-                  />
-                  <Chip 
-                    icon={<SettingsIcon />} 
-                    label={car.transmission} 
-                    variant="outlined"
-                  />
-                </Stack>
-
-                <Typography variant="h4" sx={{ mb: 3, color: 'primary.main', fontWeight: 'bold' }}>
-                  €{car.price.toLocaleString()}
-                </Typography>
-
-                <Button 
-                  variant="contained" 
-                  color="primary" 
-                  size="large"
-                  fullWidth
-                  sx={{ mb: 2 }}
+                <IconButton
+                  onClick={() => toggleFavorite(car!.id)}
+                  aria-label="marcar favorito"
                 >
-                  Comprar Ahora
-                </Button>
-                
-                <Button 
-                  variant="outlined" 
-                  color="primary" 
-                  size="large"
-                  fullWidth
-                  sx={{ mb: 3 }}
-                >
-                  Solicitar Información
-                </Button>
-
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <LocationIcon sx={{ mr: 1, color: 'text.secondary' }} />
-                  <Typography variant="body2" color="text.secondary">
-                    {car.location}
+                  {isFavorite ? (
+                    <Favorite sx={{ color: "red" }} />
+                  ) : (
+                    <FavoriteBorder />
+                  )}
+                </IconButton>
+              </Box>
+              <Typography
+                variant="h4"
+                sx={{ mb: 3, color: "primary.main", fontWeight: "bold" }}
+              >
+                ${car?.price.toLocaleString()}
+              </Typography>
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                fullWidth
+                sx={{ mb: 2 }}
+              >
+                Comprar Ahora
+              </Button>
+              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                <Typography variant="body2" color="text.secondary">
+                  {car?.status === "AVAILABLE" ? "Disponible" : "No Disponible"}
+                </Typography>
+              </Box>
+            </Card>
+            <Card sx={{ p: 3 }}>
+              <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
+                Vendedor
+              </Typography>
+              <Typography variant="body1" sx={{ mb: 1, fontWeight: 500 }}>
+                {car?.concesionary.concessionaryName}
+              </Typography>
+              <Stack spacing={1}>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <EmailIcon
+                    sx={{ mr: 1, color: "text.secondary", fontSize: 20 }}
+                  />
+                  <Typography variant="body2">
+                    {car?.concesionary.email}
                   </Typography>
                 </Box>
-              </Card>
-
-              {/* Seller Information */}
-              <Card sx={{ p: 3 }}>
-                <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
-                  Vendedor
-                </Typography>
-                <Typography variant="body1" sx={{ mb: 1, fontWeight: 'medium' }}>
-                  {car.seller.name}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                  {car.seller.type}
-                </Typography>
-                
-                <Stack spacing={1}>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <PhoneIcon sx={{ mr: 1, color: 'text.secondary', fontSize: 20 }} />
-                    <Typography variant="body2">
-                      {car.seller.phone}
-                    </Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <EmailIcon sx={{ mr: 1, color: 'text.secondary', fontSize: 20 }} />
-                    <Typography variant="body2">
-                      {car.seller.email}
-                    </Typography>
-                  </Box>
-                </Stack>
-              </Card>
-            </Box>
+              </Stack>
+            </Card>
           </Box>
+        </Box>
 
-          {/* Description and Details */}
-          <Box sx={{ 
-            display: 'grid', 
-            gridTemplateColumns: { xs: '1fr', md: '2fr 1fr' }, 
+        <Box
+          sx={{
+            display: "grid",
             gap: 4,
-            mt: 4 
-          }}>
-            <Box>
-              <Card sx={{ p: 3, mb: 3 }}>
-                <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
-                  Descripción
-                </Typography>
-                <Typography variant="body1" color="text.secondary" sx={{ lineHeight: 1.6 }}>
-                  {car.description}
-                </Typography>
-              </Card>
+            mt: 4,
+          }}
+        >
+          <Box>
+            <Card sx={{ p: 3, mb: 3 }}>
+              <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
+                Descripción
+              </Typography>
+              <Typography
+                variant="body1"
+                color="text.secondary"
+                sx={{ lineHeight: 1.6 }}
+              >
+                {car?.modelCar.description}
+              </Typography>
+            </Card>
+          </Box>
+        </Box>
 
-              <Card sx={{ p: 3 }}>
-                <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
-                  Características
+        <Box sx={{ mt: 4 }}>
+          <Card sx={{ p: 3 }}>
+            <Box sx={{ mb: 4 }}>
+              <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                Dejá tu reseña
+              </Typography>
+              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                <Typography variant="body2" sx={{ mr: 2 }}>
+                  Puntuación:
                 </Typography>
-                <Box sx={{ 
-                  display: 'grid', 
-                  gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, 
-                  gap: 1 
-                }}>
-                  {car.features.map((feature, index) => (
-                    <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                      <CheckIcon sx={{ mr: 1, color: 'primary.main', fontSize: 20 }} />
-                      <Typography variant="body2">
-                        {feature}
-                      </Typography>
-                    </Box>
+                <Box sx={{ display: "flex" }}>
+                  {[...Array(10)].map((_, index) => (
+                    <IconButton
+                      key={index}
+                      size="small"
+                      onClick={() => setReviewScore(index + 1)}
+                    >
+                      {index < reviewScore ? (
+                        <StarIcon sx={{ color: "primary.main" }} />
+                      ) : (
+                        <StarBorderIcon sx={{ color: "primary.main" }} />
+                      )}
+                    </IconButton>
                   ))}
                 </Box>
-              </Card>
-            </Box>
-
-            <Box>
-              <Card sx={{ p: 3 }}>
-                <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
-                  Especificaciones Técnicas
+                <Typography variant="body2" sx={{ ml: 2, fontWeight: 600 }}>
+                  {reviewScore}/10
                 </Typography>
-                <List dense>
-                  <ListItem>
-                    <ListItemText 
-                      primary="Motor"
-                      secondary={car.specifications.motor}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemText 
-                      primary="Potencia"
-                      secondary={car.specifications.potencia}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemText 
-                      primary="Consumo"
-                      secondary={car.specifications.consumo}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemText 
-                      primary="Color"
-                      secondary={car.specifications.color}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemText 
-                      primary="Puertas"
-                      secondary={car.specifications.puertas}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemText 
-                      primary="Plazas"
-                      secondary={car.specifications.plazas}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemText 
-                      primary="Capacidad Maletero"
-                      secondary={car.specifications.maletero}
-                    />
-                  </ListItem>
-                </List>
-              </Card>
+              </Box>
+              <TextField
+                label="Comentario"
+                fullWidth
+                multiline
+                minRows={3}
+                maxRows={6}
+                value={reviewComment}
+                onChange={(e) => setReviewComment(e.target.value)}
+                variant="outlined"
+                sx={{ mb: 2 }}
+              />
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{ px: 3 }}
+                onClick={handleSubmitReview}
+                disabled={isSubmittingReview}
+              >
+                {isSubmittingReview ? "Enviando..." : "Enviar Reseña"}
+              </Button>
             </Box>
-          </Box>
-        </Container>
-      </Box>
-    </ThemeProvider>
+            <Typography variant="h6" sx={{ mb: 3, fontWeight: "bold" }}>
+              Reseñas de Usuarios
+            </Typography>
+            <Stack spacing={3}>
+              {reviews?.map((review) => (
+                <Box key={review.id}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      mb: 1,
+                    }}
+                  >
+                    <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                      {review.buyer.fullname}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {new Date(review.createdAt).toLocaleDateString("es-ES")}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                    <Box sx={{ display: "flex", mr: 1 }}>
+                      {[...Array(10)].map((_, index) =>
+                        index < review.score ? (
+                          <StarIcon
+                            key={index}
+                            sx={{ color: "primary.main", fontSize: 18 }}
+                          />
+                        ) : (
+                          <StarBorderIcon
+                            key={index}
+                            sx={{ color: "primary.main", fontSize: 18 }}
+                          />
+                        )
+                      )}
+                    </Box>
+                    <Typography
+                      variant="body2"
+                      sx={{ fontWeight: 600, color: "primary.main" }}
+                    >
+                      {review.score}/10
+                    </Typography>
+                  </Box>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ lineHeight: 1.6 }}
+                  >
+                    {review.comment}
+                  </Typography>
+                  {review.id !== reviews[reviews.length - 1].id && (
+                    <Divider sx={{ mt: 2 }} />
+                  )}
+                </Box>
+              ))}
+            </Stack>
+          </Card>
+        </Box>
+      </Grid>
+    </Grid>
   );
-}
+};
+
+export default CarDetail;
