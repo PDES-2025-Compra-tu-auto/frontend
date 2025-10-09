@@ -20,7 +20,6 @@ import {
   RoleTypography,
   StyledDivider,
   UserButton,
-  UserButtonInnerBox,
   MenuPaper,
   MenuPaperSmall,
   Divider,
@@ -62,7 +61,7 @@ export const Navbar = () => {
   }, [pathname]);
   return (
     <StyledAppBar position="sticky" show={showNavbar}>
-      <Container maxWidth="xl">
+      <Container sx={{maxWidth:'100%',width:'100%', minWidth:'100%'}}>
         <StyledToolbar>
           <LogoBox>
             <DirectionsCar sx={{ fontSize: 32 }} />
@@ -86,13 +85,13 @@ export const Navbar = () => {
           {isAuthenticated ? (
             <>
               <UserButton onClick={handleClick}>
-                <UserButtonInnerBox>
+                <LogoBox>
                   <Avatar
                     sx={{ width: 40, height: 40, fontSize: "1rem" }}
                     name={userProfile?.fullname || "U"}
                   />
                   <ExpandMore sx={{ fontSize: 20 }} />
-                </UserButtonInnerBox>
+                </LogoBox>
               </UserButton>
               <Menu
                 anchorEl={anchorEl}
@@ -116,13 +115,14 @@ export const Navbar = () => {
                 <Divider />
 
                 <MenuItem
+                  sx={{mt:1}}
                   onClick={() => {
                     handleMenuClose();
                     navigate("/profile");
                   }}
                 >
                   <ListItemIcon>
-                    <Avatar sx={{ height: 25, width: 25 }} />
+                    <Avatar sx={{ height: 25, width: 25,bgcolor:'#1976d2' }} />
                   </ListItemIcon>
                   Mi perfil
                 </MenuItem>

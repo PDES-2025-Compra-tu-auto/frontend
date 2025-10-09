@@ -9,7 +9,7 @@ import { useMemo } from "react";
 
 export function useCtaQuery<T, P>(
   fetch: (params?: P) => FetchServiceEndpoint<T>,
-  config?: UseQueryOptions<T, FetchError<T>>
+  config?: Omit<UseQueryOptions<T, FetchError<T>>,'queryKey'>
 ): UseQueryResult<T, FetchError<T>> {
   const { getToken } = useAuth();
 

@@ -6,20 +6,26 @@ import Register from "./pages/Register";
 import Landing from "./pages/Landing";
 import { Navbar } from "./components/core/containers/Navbar";
 import Dashboard from "./pages/Dashboard";
+import Profile from "./pages/Profile";
+import ExploreCars from "./pages/Cars";
+import CarDetail from "./pages/CarDetail";
 
 function App() {
   return (
     <BrowserRouter>
-      <Navbar/>
+      <Navbar />
       <Routes>
         <Route element={<ProtectedRoute />}>
-          <Route path="/dashboard" element={<Dashboard/>} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/cars" element={<ExploreCars />} />
+          <Route path="/car/:id" element={<CarDetail />} />
         </Route>
 
         <Route element={<PublicRoute />}>
-          <Route path="/" element={<Landing/>}/>
-          <Route path="/login" element={<Login/>} />
-          <Route path="/register" element ={<Register/>}/>
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
         </Route>
       </Routes>
     </BrowserRouter>

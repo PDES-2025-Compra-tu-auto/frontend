@@ -30,16 +30,26 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [accessToken, setToken] = useState<string | undefined>();
   const [isLoading, setIsLoading] = useState(true);
+  const [lastValidationTime, setLastValidationTime] = useState<number | null>(
+    null
+  );
+  const VALIDATION_WINDOW_MS = 3 * 60 * 1000;
 
   useEffect(() => {
     setIsLoading(true);
     const accessToken = localStorage.getItem("accessToken");
     if (accessToken) {
       validateToken(accessToken);
+      setLastValidationTime(Date.now());
     } else {
       setIsLoading(false);
     }
   }, []);
+
+  const shouldRenewToken = (now: number, expiresAt: number, minutes = 5) => {
+    const buffer = minutes * 60 * 1000;
+    return expiresAt - now <= buffer;
+  };
 
   const validateToken = (accessToken: string) => {
     validateCTA(accessToken)
@@ -56,47 +66,66 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
       });
   };
 
+  const userProfile = useMemo(
+    () =>
+      JSON.parse(localStorage.getItem("userContext") || "null") ?? undefined,
+    [localStorage, isAuthenticated]
+  );
+
   const getToken = useCallback(async (): Promise<string | undefined> => {
-    setIsLoading(true);
+    const now = Date.now();
+
+    const clearAuth = () => {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("userContext");
+      setIsAuthenticated(false);
+      setToken(undefined);
+      setLastValidationTime(null);
+    };
+
+    const storeAndReturnToken = (token: string) => {
+      setIsAuthenticated(true);
+      setToken(token);
+      setLastValidationTime(now);
+      return token;
+    };
 
     try {
       const token = accessToken ?? localStorage.getItem("accessToken");
 
       if (!token) {
-        setIsAuthenticated(false);
-        setToken(undefined);
+        clearAuth();
         return undefined;
       }
+
+      const isTokenRecentlyValidated =
+        lastValidationTime && now - lastValidationTime < VALIDATION_WINDOW_MS;
+
+      const isTokenStillFresh = !shouldRenewToken(
+        now,
+        userProfile?.expiresAt,
+        5
+      );
+
+      if (isTokenRecentlyValidated && isTokenStillFresh) {
+        return token;
+      }
+
       try {
         await validateCTA(token);
-        setIsAuthenticated(true);
-        setToken(token);
-        return token;
+        return storeAndReturnToken(token);
       } catch {
-        try {
-          const refresh = localStorage.getItem("refreshToken") ?? "";
-          const { accessToken: newToken } = await refreshCTA({
-            token: refresh,
-          });
-          localStorage.setItem("accessToken", newToken);
-          setIsAuthenticated(true);
-          setToken(newToken);
-          return newToken;
-        } catch (refreshError) {
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("refreshToken");
-          localStorage.removeItem("userContext");
-          setIsAuthenticated(false);
-          setToken(undefined);
-          return undefined;
-        }
+        const refresh = localStorage.getItem("refreshToken") ?? "";
+        const { accessToken: newToken } = await refreshCTA({ token: refresh });
+        localStorage.setItem("accessToken", newToken);
+        return storeAndReturnToken(newToken);
       }
-    } catch (error) {
+    } catch {
+      clearAuth();
       return undefined;
-    } finally {
-      setIsLoading(false);
     }
-  }, [isAuthenticated]);
+  }, [accessToken, lastValidationTime, userProfile]);
 
   const login = async (userCredentials: LoginCredentials) => {
     try {
@@ -121,12 +150,6 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     setToken(undefined);
     localStorage.removeItem("userContext");
   };
-
-  const userProfile = useMemo(
-    () =>
-      JSON.parse(localStorage.getItem("userContext") || "null") ?? undefined,
-    [localStorage, isAuthenticated]
-  );
 
   return (
     <AuthContext.Provider

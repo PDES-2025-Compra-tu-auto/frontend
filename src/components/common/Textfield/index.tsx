@@ -4,7 +4,7 @@ import { StyledTextField } from "./styles";
 import type { FC } from "react";
 
 type ExtraTexfieldProps = {  header?: string };
-type TextFieldProps = MuiTextFieldProps & ExtraTexfieldProps;
+export type TextFieldProps = MuiTextFieldProps & ExtraTexfieldProps;
 
 export const TextField: FC<TextFieldProps> = ({
   header,

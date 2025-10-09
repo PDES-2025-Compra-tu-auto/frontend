@@ -13,7 +13,6 @@ import {
   DirectionsCar as CarIcon,
   Visibility,
   VisibilityOff,
-  Email as EmailIcon,
   Lock as LockIcon,
 } from "@mui/icons-material";
 import { useState } from "react";
@@ -24,6 +23,7 @@ import { TextField } from "@/components/common/Textfield";
 import { Button } from "@/components/common/Button";
 import { useAuth } from "@/context/AuthContext/useAuth";
 import { loginSchema, type LoginFormData } from "./validations";
+import { EmailInput } from "@/components/core/components/form/EmailInput";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -108,23 +108,11 @@ const Login = () => {
           <CardContent sx={{ p: 4 }}>
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
               <Box sx={{ mb: 3 }}>
-                <TextField
-                  fullWidth
-                  label="Correo Electrónico"
-                  type="email"
-                  error={!!errors.email}
+                <EmailInput
+                   error={!!errors.email}
                   helperText={errors.email?.message}
                   disabled={isLoading}
-                  {...register("email")}
-                  slotProps={{
-                    input: {
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <EmailIcon sx={{ color: "text.secondary" }} />
-                        </InputAdornment>
-                      ),
-                    },
-                  }}
+                  {...register("email")}    
                 />
               </Box>
 
@@ -164,22 +152,6 @@ const Login = () => {
                   {errors.root.message}
                 </Alert>
               )}
-
-              <Box sx={{ mb: 3, textAlign: "right" }}>
-                <Link
-                  variant="body2"
-                  sx={{
-                    color: "primary.main",
-                    textDecoration: "none",
-                    "&:hover": {
-                      textDecoration: "underline",
-                    },
-                  }}
-                >
-                  ¿Olvidaste tu contraseña?
-                </Link>
-              </Box>
-
               <Button
                 type="submit"
                 fullWidth

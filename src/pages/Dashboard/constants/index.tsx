@@ -2,19 +2,24 @@ import CarRentalIcon from "@mui/icons-material/CarRental";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import InsertChartOutlinedIcon from '@mui/icons-material/InsertChartOutlined';
-import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
-import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
-import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
+import InsertChartOutlinedIcon from "@mui/icons-material/InsertChartOutlined";
+import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
+import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
+import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
+import CreateIcon from '@mui/icons-material/Create';
 
 import type { ReactNode } from "react";
 
 interface ICardsProfile {
-  [key: string]: { icon: ReactNode };
+  [key: string]: { icon: ReactNode; redirect?: string };
 }
-const iconStyle = { color: '#0066ff', fontSize: '2.5rem' };
+const iconStyle = { color: "#0066ff", fontSize: "2.5rem" };
 
 export const CARDS_PROFILE: ICardsProfile = {
+  "create-sale-car":{
+    icon: <CreateIcon sx={iconStyle}/>
+  },
+
   "my-cars": {
     icon: <CarRentalIcon sx={iconStyle} />,
   },
@@ -23,8 +28,9 @@ export const CARDS_PROFILE: ICardsProfile = {
   },
   "explore-cars": {
     icon: <DirectionsCarIcon sx={iconStyle} />,
+    redirect: "/cars",
   },
-  "reports": {
+  reports: {
     icon: <InsertChartOutlinedIcon sx={iconStyle} />,
   },
   "most-favorited-cars": {
@@ -39,13 +45,13 @@ export const CARDS_PROFILE: ICardsProfile = {
   "manage-cars": {
     icon: <DirectionsCarIcon sx={iconStyle} />,
   },
-  "sales": {
+  sales: {
     icon: <PointOfSaleIcon sx={iconStyle} />,
   },
-  "customers": {
+  customers: {
     icon: <PeopleAltOutlinedIcon sx={iconStyle} />,
   },
-  "default": {
+  default: {
     icon: <HelpOutlineIcon sx={iconStyle} />,
-  }
+  },
 };

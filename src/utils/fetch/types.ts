@@ -15,6 +15,12 @@ export interface FetchError<T> {
     headers: {[x:string]:string}
 }
 
+export interface PaginatedCursorResponse<T> {
+  items: T[];
+  nextCursor?: string;
+  hasMore: boolean;      
+}
+
 export interface PaginatedResponse<T> {
     items: Array<T>
     page:number 
