@@ -78,7 +78,35 @@ const CreateSaleCar = () => {
     { label: "Nueva venta", enabled: true },
   ];
 
-  return !type ? (
+  return type ? (
+    <Box
+      sx={{
+        minHeight: "75vh",
+        bgcolor: "background.default",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        py: 4,
+      }}
+    >
+      <Congrats
+        type={type}
+        title={congratsType[type].title}
+        subtitle={congratsType[type].subtitle}
+      >
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          disabled={isLoading}
+          sx={{ pr: "16px", pl: "16px" }}
+          onClick={() => navigate("/dashboard")}
+        >
+          Volver al inicio
+        </Button>
+      </Congrats>
+    </Box>
+  ) : (
     <Box sx={{ bgcolor: "background.default" }}>
       <Container maxWidth="xl" sx={{ py: 4 }}>
         <Breadcrumbs items={breadcrumbItems} />
@@ -86,7 +114,7 @@ const CreateSaleCar = () => {
           elevation={0}
           sx={{
             p: 4,
-            mt:4,
+            mt: 4,
             mb: 3,
             borderRadius: 2,
             border: "1px solid hsl(220, 10%, 90%)",
@@ -182,14 +210,15 @@ const CreateSaleCar = () => {
                     label="Precio de Venta"
                     type="number"
                     disabled={isLoading}
-                    slotProps={
-                        {input:{
-                            startAdornment:(
-                        <InputAdornment position="start">
-                          <MoneyIcon sx={{ color: "text.secondary" }} />
-                        </InputAdornment>)
-                        }}
-                    }
+                    slotProps={{
+                      input: {
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <MoneyIcon sx={{ color: "text.secondary" }} />
+                          </InputAdornment>
+                        ),
+                      },
+                    }}
                     helperText={
                       errors.price?.message ||
                       "Ingresa el precio en tu moneda local"
@@ -260,34 +289,6 @@ const CreateSaleCar = () => {
           </Typography>
         </Paper>
       </Container>
-    </Box>
-  ) : (
-    <Box
-      sx={{
-        minHeight: "75vh",
-        bgcolor: "background.default",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        py: 4,
-      }}
-    >
-      <Congrats
-        type={type}
-        title={congratsType[type].title}
-        subtitle={congratsType[type].subtitle}
-      >
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          disabled={isLoading}
-          sx={{ pr: "16px", pl: "16px" }}
-          onClick={() => navigate("/dashboard")}
-        >
-          Volver al inicio
-        </Button>
-      </Congrats>
     </Box>
   );
 };
