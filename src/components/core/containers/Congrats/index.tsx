@@ -17,6 +17,7 @@ export const Congrats: React.FC<CongratsProps> = ({
   title,
   subtitle,
   children,
+  size
 }) => {
   return (
     <Box
@@ -26,8 +27,8 @@ export const Congrats: React.FC<CongratsProps> = ({
       textAlign="center"
       sx={{ bgcolor: 'background.default' }}
     >
-      {type === "success" && <SuccessIcon />}
-      {type === "error" && <ErrorIcon />}
+      {type === "success" && <SuccessIcon size={size} />}
+      {type === "error" && <ErrorIcon size={size}/>}
 
       <Typography variant="h4" mt={4} gutterBottom>
         {title}
