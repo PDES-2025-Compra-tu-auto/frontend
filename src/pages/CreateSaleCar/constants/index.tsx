@@ -17,8 +17,7 @@ export const congratsType: {
   warning: { title: "Advertencia", subtitle: "Revisa los datos ingresados" },
 };
 
-export // Car Models
-const carModels = [
+export const carModels = [
   {
     id: "1",
     name: "Tesla Model 3",

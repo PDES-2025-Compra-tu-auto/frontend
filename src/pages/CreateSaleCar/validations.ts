@@ -5,7 +5,7 @@ export const schema = z.object({
   price: z
     .string()
     .min(1, "El precio es obligatorio")
-    .refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+    .refine((val) => !Number.isNaN(Number(val)) && Number(val) > 0, {
       message: "El precio debe ser un número mayor que cero",
     }),
 });
