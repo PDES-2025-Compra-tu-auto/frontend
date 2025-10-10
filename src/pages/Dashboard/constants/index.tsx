@@ -17,7 +17,8 @@ const iconStyle = { color: "#0066ff", fontSize: "2.5rem" };
 
 export const CARDS_PROFILE: ICardsProfile = {
   "create-sale-car":{
-    icon: <CreateIcon sx={iconStyle}/>
+    icon: <CreateIcon sx={iconStyle}/>,
+    redirect: "/sale-car"
   },
 
   "my-cars": {

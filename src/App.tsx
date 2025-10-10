@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import ExploreCars from "./pages/Cars";
 import CarDetail from "./pages/CarDetail";
+import CreateSaleCar from "./pages/CreateSaleCar";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/cars" element={<ExploreCars />} />
           <Route path="/car/:id" element={<CarDetail />} />
+          <Route path="/sale-car" element={<CreateSaleCar />} />
         </Route>
 
         <Route element={<PublicRoute />}>
