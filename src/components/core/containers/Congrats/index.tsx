@@ -1,14 +1,15 @@
 // Congrats.tsx
 import React from "react";
 import { Box, Typography } from "@mui/material";
-import SuccessIcon from "@/components/common/";
+import SuccessIcon from "@/components/common";
+import ErrorIcon from "@/components/common/animated/ErrorIcon";
 
 interface CongratsProps {
   type?: "success" | "error" | "info" | "warning";
   title: string;
   subtitle?: string;
   children?: React.ReactNode;
-  size?: number; // Para personalizar el tamaño del checkmark opcionalmente
+  size?: number; 
 }
 
 export const Congrats: React.FC<CongratsProps> = ({
@@ -16,6 +17,7 @@ export const Congrats: React.FC<CongratsProps> = ({
   title,
   subtitle,
   children,
+  size
 }) => {
   return (
     <Box
@@ -23,8 +25,10 @@ export const Congrats: React.FC<CongratsProps> = ({
       flexDirection="column"
       alignItems="center"
       textAlign="center"
+      sx={{ bgcolor: 'background.default' }}
     >
-      {type === "success" && <SuccessIcon />}
+      {type === "success" && <SuccessIcon size={size} />}
+      {type === "error" && <ErrorIcon size={size}/>}
 
       <Typography variant="h4" mt={4} gutterBottom>
         {title}

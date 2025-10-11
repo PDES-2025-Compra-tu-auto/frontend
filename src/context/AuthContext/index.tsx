@@ -28,7 +28,7 @@ type AuthProviderProps = {
 
 export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [accessToken, setToken] = useState<string | undefined>();
+  const [accessToken, setAccessToken] = useState<string | undefined>();
   const [isLoading, setIsLoading] = useState(true);
   const [lastValidationTime, setLastValidationTime] = useState<number | null>(
     null
@@ -55,7 +55,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     validateCTA(accessToken)
       .then(() => {
         setIsAuthenticated(true);
-        setToken(accessToken);
+        setAccessToken(accessToken);
       })
       .catch((error) => {
         localStorage.removeItem("accessToken");
@@ -80,13 +80,13 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("userContext");
       setIsAuthenticated(false);
-      setToken(undefined);
+      setAccessToken(undefined);
       setLastValidationTime(null);
     };
 
     const storeAndReturnToken = (token: string) => {
       setIsAuthenticated(true);
-      setToken(token);
+      setAccessToken(token);
       setLastValidationTime(now);
       return token;
     };
@@ -135,10 +135,10 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
       setIsAuthenticated(true);
-      setToken(accessToken);
+      setAccessToken(accessToken);
     } catch (error) {
       setIsAuthenticated(false);
-      setToken(undefined);
+      setAccessToken(undefined);
       throw error;
     }
   };
@@ -147,21 +147,24 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     setIsAuthenticated(false);
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
-    setToken(undefined);
+    setAccessToken(undefined);
     localStorage.removeItem("userContext");
   };
 
+  const contextValue = useMemo(
+    () => ({
+      isAuthenticated,
+      getToken,
+      login,
+      logout,
+      isLoading,
+      userProfile,
+    }),
+    [isAuthenticated, getToken, login, logout, isLoading, userProfile]
+  );
+
   return (
-    <AuthContext.Provider
-      value={{
-        isAuthenticated,
-        getToken,
-        login,
-        logout,
-        isLoading,
-        userProfile,
-      }}
-    >
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );

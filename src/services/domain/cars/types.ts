@@ -3,9 +3,12 @@ export enum AvailabilityCar {
     UNAVAILABLE= 'UNAVAILABLE'
 }
 
-export interface SaleCarResponse {
-  id: string;
-  price: number;
+export interface BasicSaleCar{
+    id:string 
+    price:number
+}
+
+export interface SaleCarResponse extends BasicSaleCar{
   status: AvailabilityCar
   modelCar: ModelCar;
   concesionary: Concessionary;

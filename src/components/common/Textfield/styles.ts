@@ -1,6 +1,6 @@
 import { styled, TextField } from "@mui/material";
 
-export const StyledTextField = styled(TextField)(({}) => ({
+export const StyledTextField = styled(TextField)(() => ({
   "& .MuiOutlinedInput-root": {
     borderRadius: 8,
     transition: "all 0.2s ease",

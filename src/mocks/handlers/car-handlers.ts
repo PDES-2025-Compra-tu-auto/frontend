@@ -1,19 +1,16 @@
 import { BACKEND_API } from "@/services/domain/constants";
-import { http, HttpResponse } from "msw";
+import { delay, http, HttpResponse } from "msw";
 import { saleCarItems } from "../data/car";
 
-const getSaleCars = http.get(
-  `${BACKEND_API}/sale-car`,
-  async () => {
-    return HttpResponse.json(saleCarItems, { status: 200 });
-  }
-);
+const getSaleCars = http.get(`${BACKEND_API}/sale-car`, async () => {
+  return HttpResponse.json(saleCarItems, { status: 200 });
+});
 
 const getSaleCarById = http.get(
-  `${BACKEND_API}/sale-car/:id`, 
+  `${BACKEND_API}/sale-car/:id`,
   async ({ params }) => {
-    const { id } = params; 
-    const car = saleCarItems.find((item) =>item.id===id); 
+    const { id } = params;
+    const car = saleCarItems.find((item) => item.id === id);
 
     if (car) {
       return HttpResponse.json(car, { status: 200 });
@@ -22,5 +19,10 @@ const getSaleCarById = http.get(
     }
   }
 );
+const createSaleCar = http.post(`${BACKEND_API}/sale-car`, async () => {
+  await delay(2000);
 
-export const carHandlers = [getSaleCarById,getSaleCars];
+  return HttpResponse.json(saleCarItems[0], { status: 201 });
+});
+
+export const carHandlers = [getSaleCarById, getSaleCars, createSaleCar];
