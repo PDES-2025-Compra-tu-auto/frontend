@@ -39,7 +39,7 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedRole, setSelectedRole] = useState<UserRole>(UserRole.BUYER);
-  const [isLoggedSuccess, setSuccess] = useState(false);
+  const [isLoggedSuccess, setIsLoggedSuccess] = useState(false);
   const {
     register,
     handleSubmit,
@@ -62,7 +62,7 @@ const Register = () => {
       });
       clearErrors();
       reset();
-      setSuccess(true);
+      setIsLoggedSuccess(true);
     } catch (error) {
       setError("root", {
         type: "manual",

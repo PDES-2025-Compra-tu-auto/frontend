@@ -23,11 +23,8 @@ export const DeleteProfileModal: FC<DeleteProfileModalProps> = ({
     <Dialog
       open={open}
       onClose={onClose}
-      PaperProps={{
-        sx: {
-          borderRadius: 3,
-          p: 1,
-        },
+      slotProps={{
+        paper: { sx: { borderRadius: 3, p: 1 } },
       }}
     >
       <DialogTitle sx={{ fontWeight: "bold", color: "error.main" }}>

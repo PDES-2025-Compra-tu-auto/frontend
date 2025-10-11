@@ -58,23 +58,32 @@ const ExploreCars = () => {
     navigate(`/car/${carId}`);
   };
 
+  const addFavorite = (carId: string) => {
+    setFavorites((prev) => [...prev, carId]);
+  };
+
+  const removeFavorite = (carId: string) => {
+    setFavorites((prev) => prev.filter((id) => id !== carId));
+  };
+
   const toggleFavorite = (carId: string) => {
-    setFavorites((prev) =>
-      prev.includes(carId)
-        ? prev.filter((id) => id !== carId)
-        : [...prev, carId]
-    )
+    const isFavorite = favorites.includes(carId);
+    if (isFavorite) {
+      removeFavorite(carId);
+    } else {
+      addFavorite(carId);
+    }
     addToFavMutation
       .mutateAsync({ saleCarId: carId })
       .then(() => toast.success("Vehiculo agregado a favoritos"))
       .catch(() => {
         toast.error("Ha ocurrido un error al agregar el vehiculo a favoritos");
-        setFavorites((prev) =>
-          prev.includes(carId)
-            ? prev.filter((id) => id !== carId)
-            : [...prev, carId]
-        )
-      })
+        if (isFavorite) {
+          addFavorite(carId);
+        } else {
+          removeFavorite(carId);
+        }
+      });
   };
 
   const breadcrumbItems = [
@@ -112,10 +121,12 @@ const ExploreCars = () => {
               placeholder="Buscar por marca, modelo..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              InputProps={{
-                startAdornment: (
+              slotProps={{
+                input:{
+                  startAdornment:  (
                   <SearchIcon sx={{ mr: 1, color: "text.secondary" }} />
                 ),
+                }
               }}
               sx={{
                 "& .MuiOutlinedInput-root": {

@@ -40,7 +40,7 @@ const Dashboard = () => {
                 icon={CARDS_PROFILE[item.id].icon}
                 onClick={() => {
                   const redirect = CARDS_PROFILE[item.id].redirect;
-                  redirect ? navigate(redirect) : undefined;
+                  if (redirect) navigate(redirect);
                 }}
               />
             </Grid>
