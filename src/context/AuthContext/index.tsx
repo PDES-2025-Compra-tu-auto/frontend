@@ -47,8 +47,9 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const shouldRenewToken = (now: number, expiresAt: number, minutes = 5) => {
-    const buffer = minutes * 60 * 1000;
-    return expiresAt - now <= buffer;
+    const buffer = minutes * 60 ;
+    const timeUntilExpiry = expiresAt - now;
+    return timeUntilExpiry <= buffer;
   };
 
   const validateToken = (accessToken: string) => {
@@ -73,7 +74,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   );
 
   const getToken = useCallback(async (): Promise<string | undefined> => {
-    const now = Date.now();
+    const now = Math.floor(Date.now()/ 1000);
 
     const clearAuth = () => {
       localStorage.removeItem("accessToken");

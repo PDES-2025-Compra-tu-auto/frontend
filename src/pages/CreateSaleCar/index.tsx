@@ -23,23 +23,22 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { schema, type CreateSaleCarForm } from "./validations";
 import { Congrats } from "@/components/core/containers/Congrats";
 import { Button } from "@/components/common/Button";
-import { carModels, congratsType } from "./constants";
-import { createSaleCar } from "@/services/domain/cars";
-import type {
-  BasicSaleCar,
-  SaleCarResponse,
-} from "@/services/domain/cars/types";
+import { congratsType } from "./constants";
+import { createSaleCar, getModelCars } from "@/services/domain/cars";
+import type { SaleCarResponse } from "@/services/domain/cars/types";
 import { useCtaMutation } from "@/hooks/useCtaMutation";
 import { Breadcrumbs } from "@/components/common/Breadcrumb";
+import { useCtaQuery } from "@/hooks/useCtaQuery";
 
 const CreateSaleCar = () => {
   const navigate = useNavigate();
   const [type, setType] = useState<"success" | "error" | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-
-  const createSaleCarMutation = useCtaMutation<SaleCarResponse, BasicSaleCar>(
-    (data) => createSaleCar(data!)
-  );
+  const { data: carModels } = useCtaQuery(getModelCars);
+  const createSaleCarMutation = useCtaMutation<
+    SaleCarResponse,
+    { price: number; modelCarId: string }
+  >((data) => createSaleCar(data!));
 
   const {
     control,
@@ -58,7 +57,7 @@ const CreateSaleCar = () => {
       setIsLoading(true);
       const id = data.carModel;
       await createSaleCarMutation.mutateAsync({
-        id,
+        modelCarId: id,
         price: Number(data.price),
       });
 
@@ -166,16 +165,17 @@ const CreateSaleCar = () => {
                         },
                       }}
                     >
-                      {carModels.map((car) => (
+                      {carModels?.map((car) => (
                         <MenuItem key={car.id} value={car.id}>
                           <ListItemIcon sx={{ minWidth: 100 }}>
                             <Box
                               component="img"
-                              src={car.image}
-                              alt={car.name}
+                              src={car.imageUrl}
+                              alt={car.brand}
                               sx={{
                                 width: 80,
                                 height: 48,
+                                mr: 2,
                                 objectFit: "cover",
                                 borderRadius: 1,
                                 border: "2px solid hsl(220, 10%, 90%)",
@@ -183,8 +183,8 @@ const CreateSaleCar = () => {
                             />
                           </ListItemIcon>
                           <ListItemText
-                            primary={car.name}
-                            slotProps={{ primary: { fontWeight: 500 } }}
+                            primary={`${car.brand}  ${car.model}`}
+                            slotProps={{ primary: { fontWeight: 700 } }}
                           />
                         </MenuItem>
                       ))}

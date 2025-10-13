@@ -1,6 +1,7 @@
 export const saleCarItems = [
   {
     id: "b3d5f0fa-2c4e-4b62-8aeb-0e83c7d9f67f",
+    favoriteId: "b4d5f0fa-2c4e-4b62-8aeb-0e83c7d9f67f",
     price: 15000,
     status: "AVAILABLE",
     modelCar: {
@@ -14,11 +15,14 @@ export const saleCarItems = [
     concesionary: {
       id: "5c9f3c7e-3c2a-4d9a-a515-f8c8bb30be3b",
       concessionaryName: "AutoCenter Norte",
-      email: 'diego@gmail.com'
+      email: "diego@gmail.com",
     },
+    favoritedByUser: true,
   },
   {
     id: "f70b7123-0542-4a4f-888f-e1c790b7c4aa",
+    favoriteId: "b4d5f0fa-2c4e-4b62-8aeb-0e83c7d9f67g",
+
     price: 22000,
     status: "AVAILABLE",
     modelCar: {
@@ -32,11 +36,14 @@ export const saleCarItems = [
     concesionary: {
       id: "1f3edc1f-786b-4fa4-9bc5-4e48cfb1b5f3",
       concessionaryName: "Concesionaria Honda Express",
-      email: 'diego@gmail.com'
+      email: "diego@gmail.com",
     },
+    favoritedByUser: false,
   },
   {
     id: "a0f95d87-c4fc-49d2-9a9f-bb1b4a87dbe1",
+    favoriteId: "b4d5f0fa-2c4e-4b62-8aeb-0e83c7d9f67h",
+
     price: 28000,
     status: "AVAILABLE",
     modelCar: {
@@ -50,12 +57,15 @@ export const saleCarItems = [
     concesionary: {
       id: "d9ecf5f3-2a1d-4dc4-a2c6-4d8f4c6cf4e3",
       concessionaryName: "Mazda Premium Motors",
-      email: 'diego@gmail.com'
+      email: "diego@gmail.com",
     },
+    favoritedByUser: true,
   },
 
   {
     id: "a0f95d87-c4fc-49d2-9a9f-bb1b4a87dbe0",
+    favoriteId: "b4d5f0fa-2c4e-4b62-8aeb-0e83c7d9f67i",
+
     price: 50000,
     status: "AVAILABLE",
     modelCar: {
@@ -69,12 +79,15 @@ export const saleCarItems = [
     concesionary: {
       id: "d9ecf5f3-2a1d-4dc4-a2c6-4d8f4c6cf4e4",
       concessionaryName: "Compra con diego",
-      email: 'diego@gmail.com'
+      email: "diego@gmail.com",
     },
+    favoritedByUser: true,
   },
 
   {
     id: "a0f95d87-c4fc-49d2-9a9f-bb1b4a87dbe2",
+    favoriteId: "b4d5f0fa-2c4e-4b62-8aeb-0e83c7d9f67j",
+
     price: 50000,
     status: "AVAILABLE",
     modelCar: {
@@ -88,12 +101,15 @@ export const saleCarItems = [
     concesionary: {
       id: "d9ecf5f3-2a1d-4dc4-a2c6-4d8f4c6cf4e4",
       concessionaryName: "Compra con diego",
-      email: 'diego@gmail.com'
+      email: "diego@gmail.com",
     },
+    favoritedByUser: false,
   },
 
   {
     id: "a0f95d87-c4fc-49d2-9a9f-bb1b4a87dbe3",
+    favoriteId: "b4d5f0fa-2c4e-4b62-8aeb-0e83c7d9f67k",
+
     price: 100000,
     status: "AVAILABLE",
     modelCar: {
@@ -107,8 +123,9 @@ export const saleCarItems = [
     concesionary: {
       id: "d9ecf5f3-2a1d-4dc4-a2c6-4d8f4c6cf4e5",
       concessionaryName: "Compra con tami",
-      email: 'diego@gmail.com'
+      email: "diego@gmail.com",
     },
+    favoritedByUser: true,
   },
 ];
 
@@ -118,3 +135,62 @@ export const getSaleCarResponse = {
   totalItems: 3,
   totalPages: 1,
 };
+
+export const carModels = [
+  {
+    id: "1",
+    brand: "Tesla",
+    model: "Model 3",
+    imageUrl:
+      "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=100&h=60&fit=crop",
+  },
+  {
+    id: "2",
+    brand: "BMW",
+    model: "Serie 3",
+    imageUrl:
+      "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=100&h=60&fit=crop",
+  },
+  {
+    id: "3",
+    brand: "Mercedes-Benz ",
+    model: "Clase C",
+    imageUrl:
+      "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=100&h=60&fit=crop",
+  },
+  {
+    id: "4",
+    brand: "Audi",
+    model: 'A4',
+    imageUrl:
+      "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=100&h=60&fit=crop",
+  },
+  {
+    id: "5",
+    brand: "Toyota",
+    model: "Camry",
+    imageUrl:
+      "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=100&h=60&fit=crop",
+  },
+  {
+    id: "6",
+    brand: "Honda",
+    model: "Accord",
+    imageUrl:
+      "https://images.unsplash.com/photo-1590362891991-f776e747a588?w=100&h=60&fit=crop",
+  },
+  {
+    id: "7",
+    brand: "Ford",
+    model: "Mustang",
+    imageUrl:
+      "https://images.unsplash.com/photo-1584345604476-8ec5f5f261ca?w=100&h=60&fit=crop",
+  },
+  {
+    id: "8",
+    brand: "Chevrolet",
+    model: "Camaro",
+    imageUrl:
+      "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=100&h=60&fit=crop",
+  },
+];
