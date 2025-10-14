@@ -27,11 +27,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            libgtk-4-1 libgraphene-1.0-0 libwoff1 libvpx6 libevent-2.1-7 libopus0 \
+            libgtk-4-1 libgraphene-1.0-0 libwoff1 libvpx7 libevent-2.1-7 libopus0 \
             gstreamer1.0-libav gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
             gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly libsecret-1-0 \
-            libhyphen0 libx264-163 libavif16 libharfbuzz-icu0
-
+            libhyphen0 libx264-dev libavif16 libharfbuzz-icu0
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
