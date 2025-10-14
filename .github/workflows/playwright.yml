@@ -23,15 +23,6 @@ jobs:
           repository: PDES-2025-Compra-tu-auto/backend
           path: backend
 
-      - name: Install system dependencies for Playwright (Ubuntu 24.04)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-          libgtk-4-1 libgraphene-1.0-0 libwoff1 libevent-2.1-7 libopus0 \
-          gstreamer1.0-libav gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
-          gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly libsecret-1-0 \
-          libhyphen0 libx264-dev libvpx-dev libavif16 libharfbuzz-icu0
-
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
@@ -41,7 +32,7 @@ jobs:
         run: npm ci
 
       - name: Install Playwright browsers 
-        run: npx playwright install
+        run: npx playwright install-deps
 
       - name: Bring up backend + db with docker-compose
         run: docker compose -f docker-e2e-compose.yml up --build -d
