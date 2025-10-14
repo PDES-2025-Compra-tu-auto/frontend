@@ -28,11 +28,14 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install dependencies
+      - name: Install frontend dependencies
         run: npm ci
 
-      - name: Install Playwright browsers 
-        run: npx playwright install-deps
+      - name: Install system dependencies for Playwright
+        run: sudo npx playwright install-deps
+
+      - name: Install Playwright browsers
+        run: npx playwright install
 
       - name: Bring up backend + db with docker-compose
         run: docker compose -f docker-e2e-compose.yml up --build -d
