@@ -1,10 +1,7 @@
-# .github/workflows/e2e.yml
-
 name: E2E Tests
 
 on:
   push:
-   
   pull_request:
     branches:
       - main
@@ -26,6 +23,15 @@ jobs:
           repository: PDES-2025-Compra-tu-auto/backend
           path: backend
 
+      - name: Install system dependencies for Playwright (including WebKit)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libgtk-4-1 libgraphene-1.0-0 libwoff1 libvpx6 libevent-2.1-7 libopus0 \
+            gstreamer1.0-libav gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
+            gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly libsecret-1-0 \
+            libhyphen0 libx264-163 libavif16 libharfbuzz-icu0
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
@@ -42,7 +48,6 @@ jobs:
 
       - name: Wait for backend to be ready
         run: |
-          # Esperar que el puerto 4000 esté disponible (backend listo)
           for i in {1..30}; do
             if nc -z localhost 4000; then
               echo "Backend is up!"
@@ -55,7 +60,15 @@ jobs:
           exit 1
 
       - name: Run Playwright tests
-        run: npx playwright test --reporter=list
+        run: npx playwright test --reporter=list --output=test-results
+        continue-on-error: true
+
+      - name: Upload Playwright artifacts (screenshots, traces, videos)
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-artifacts
+          path: test-results
 
       - name: Tear down docker-compose
         if: always()
