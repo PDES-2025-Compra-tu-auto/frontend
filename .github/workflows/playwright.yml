@@ -35,7 +35,7 @@ jobs:
         run: npm ci
 
       - name: Bring up backend + db with docker-compose
-        run: docker-compose -f docker-e2e-compose.yml up --build -d
+        run: docker compose -f docker-e2e-compose.yml up --build -d
 
       - name: Wait for backend to be ready
         run: |
@@ -56,4 +56,4 @@ jobs:
 
       - name: Tear down docker-compose
         if: always()
-        run: docker-compose -f docker-e2e-compose.yml down -v
+        run: docker compose -f docker-e2e-compose.yml down -v
