@@ -1,7 +1,7 @@
 import { fetchJson } from "@/utils/fetch/httpService";
 import type { FetchServiceEndpoint } from "@/utils/fetch/types";
 import { BACKEND_API } from "../constants";
-import type { BasicSaleCar, SaleCarResponse } from "./types";
+import type { ModelCar, SaleCarResponse } from "./types";
 
 export const getSaleCars = (): FetchServiceEndpoint<SaleCarResponse[]> => {
   return {
@@ -44,7 +44,7 @@ export const updateSaleCar = (id:string,data:any): FetchServiceEndpoint<any> => 
   };
 };
 
-export const createSaleCar = (data:BasicSaleCar): FetchServiceEndpoint<SaleCarResponse> => {
+export const createSaleCar = (data:{price:number,modelCarId:string}): FetchServiceEndpoint<SaleCarResponse> => {
   return {
     keys: [],
     fetcher: (options) =>
@@ -56,5 +56,18 @@ export const createSaleCar = (data:BasicSaleCar): FetchServiceEndpoint<SaleCarRe
         ...options,
       }).then((res) => res),
   };
+}
+  export const getModelCars = (): FetchServiceEndpoint<ModelCar[]> => {
+  return {
+    keys: ["model-cars"],
+    fetcher: (options) =>
+      fetchJson<ModelCar[]>({
+        url: `${BACKEND_API}/model-cars`,
+        method: "GET",
+        withCredentials: false,
+        ...options,
+      }).then((res) => res),
+  };
+
 };
 

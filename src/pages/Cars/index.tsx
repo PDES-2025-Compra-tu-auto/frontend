@@ -26,8 +26,13 @@ import { Breadcrumbs } from "@/components/common/Breadcrumb";
 import { getSaleCars } from "@/services/domain/cars";
 import { useCtaQuery } from "@/hooks/useCtaQuery";
 import { useCtaMutation } from "@/hooks/useCtaMutation";
-import { addSaleCarToFavourite } from "@/services/domain/favourites";
+import {
+  addSaleCarToFavourite,
+  deleteFavourite,
+} from "@/services/domain/favourites";
 import { toast } from "react-toastify";
+import type { FavoriteResponse } from "@/services/domain/favourites/types";
+import type { BasicSaleCar } from "@/services/domain/cars/types";
 
 const brands = [
   "Todas",
@@ -47,43 +52,51 @@ const ExploreCars = () => {
   const [selectedBrand, setSelectedBrand] = useState("Todas");
   const [selectedFuel, setSelectedFuel] = useState("Todos");
   const [selectedTransmission, setSelectedTransmission] = useState("Todas");
-  const [favorites, setFavorites] = useState<string[]>([]);
-  const addToFavMutation = useCtaMutation<any, { saleCarId: string }>((data) =>
-    addSaleCarToFavourite(data!)
+  const addToFavMutation = useCtaMutation<
+    FavoriteResponse,
+    { saleCarId: string }
+  >((data) => addSaleCarToFavourite(data!));
+  const deleteFavMutation = useCtaMutation<{ message: string }, string>(
+    (data) => deleteFavourite(data!)
   );
 
-  const { data: cars } = useCtaQuery(getSaleCars);
+  const { data: cars, refetch } = useCtaQuery(getSaleCars);
 
   const handleCarClick = (carId: string) => {
     navigate(`/car/${carId}`);
   };
 
   const addFavorite = (carId: string) => {
-    setFavorites((prev) => [...prev, carId]);
-  };
-
-  const removeFavorite = (carId: string) => {
-    setFavorites((prev) => prev.filter((id) => id !== carId));
-  };
-
-  const toggleFavorite = (carId: string) => {
-    const isFavorite = favorites.includes(carId);
-    if (isFavorite) {
-      removeFavorite(carId);
-    } else {
-      addFavorite(carId);
-    }
     addToFavMutation
       .mutateAsync({ saleCarId: carId })
-      .then(() => toast.success("Vehiculo agregado a favoritos"))
+      .then(() => {
+        refetch();
+        toast.success("Vehiculo agregado a favoritos");
+      })
       .catch(() => {
         toast.error("Ha ocurrido un error al agregar el vehiculo a favoritos");
-        if (isFavorite) {
-          addFavorite(carId);
-        } else {
-          removeFavorite(carId);
-        }
       });
+  };
+
+  const removeFavorite = (favId: string) => {
+    deleteFavMutation
+      .mutateAsync(favId)
+      .then(() => {
+        refetch();
+        toast.success("Auto removido de favoritos");
+      })
+      .catch(() => {
+        toast.error("Ha ocurrido un error, intente nuevamente");
+      });
+  };
+
+  const toggleFavorite = (car: BasicSaleCar) => {
+    const isFavorite = car.favoritedByUser;
+    if (isFavorite) {
+      removeFavorite(car.favoriteId!);
+    } else {
+      addFavorite(car.id);
+    }
   };
 
   const breadcrumbItems = [
@@ -101,10 +114,10 @@ const ExploreCars = () => {
       sx={{
         px: { xs: 3, md: 8 },
         py: { xs: 4, md: 6 },
-        bgcolor: 'background.default'
+        bgcolor: "background.default",
       }}
     >
-      <Grid sx={{ py:1 }}>
+      <Grid sx={{ py: 1 }}>
         <Breadcrumbs items={breadcrumbItems} />
 
         <Box sx={{ mb: 4, mt: 4 }}>
@@ -122,16 +135,16 @@ const ExploreCars = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               slotProps={{
-                input:{
-                  startAdornment:  (
-                  <SearchIcon sx={{ mr: 1, color: "text.secondary" }} />
-                ),
-                }
+                input: {
+                  startAdornment: (
+                    <SearchIcon sx={{ mr: 1, color: "text.secondary" }} />
+                  ),
+                },
               }}
               sx={{
                 "& .MuiOutlinedInput-root": {
                   borderRadius: 2,
-                  borderWidth:2
+                  borderWidth: 2,
                 },
               }}
             />
@@ -227,7 +240,7 @@ const ExploreCars = () => {
               }}
             >
               <IconButton
-                onClick={() => toggleFavorite(car.id)}
+                onClick={() => toggleFavorite(car)}
                 sx={{
                   position: "absolute",
                   top: 8,
@@ -239,7 +252,7 @@ const ExploreCars = () => {
                   },
                 }}
               >
-                {favorites.includes(car.id) ? (
+                {car.favoritedByUser ? (
                   <Favorite sx={{ color: "red" }} />
                 ) : (
                   <FavoriteBorder sx={{ color: "grey.500" }} />
