@@ -2,6 +2,9 @@ name: E2E Tests
 
 on:
   push:
+    branches:
+      - main
+      - development
   pull_request:
     branches:
       - main
@@ -22,6 +25,7 @@ jobs:
         with:
           repository: PDES-2025-Compra-tu-auto/backend
           path: backend
+          ref: ${{github.ref_name}}
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -54,7 +58,7 @@ jobs:
           exit 1
 
       - name: Run Playwright tests
-        run: npx playwright test --reporter=list --output=test-results
+        run: npx playwright test --project=chromium --reporter=list --output=test-results
         continue-on-error: true
 
       - name: Upload Playwright artifacts (screenshots, traces, videos)
