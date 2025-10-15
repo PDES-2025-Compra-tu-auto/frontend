@@ -52,21 +52,23 @@ const CreateSaleCar = () => {
     },
   });
 
-  const onSubmit = async (data: CreateSaleCarForm) => {
-    try {
-      setIsLoading(true);
-      const id = data.carModel;
-      await createSaleCarMutation.mutateAsync({
+  const onSubmit = (data: CreateSaleCarForm) => {
+    setIsLoading(true);
+    const id = data.carModel;
+    createSaleCarMutation
+      .mutateAsync({
         modelCarId: id,
         price: Number(data.price),
+      })
+      .then(() => {
+        setType("success");
+      })
+      .catch(() => {
+        setType("error");
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
-
-      setType("success");
-    } catch (error) {
-      setType("error");
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   const breadcrumbItems = [

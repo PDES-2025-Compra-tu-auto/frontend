@@ -1,6 +1,6 @@
 import { BACKEND_API } from "@/services/domain/constants";
 import { delay, http, HttpResponse } from "msw";
-import { carModels, saleCarItems } from "../data/car";
+import { carModels, purchaseResponse, saleCarItems } from "../data/car";
 
 const getSaleCars = http.get(`${BACKEND_API}/sale-car`, async () => {
   return HttpResponse.json(saleCarItems, { status: 200 });
@@ -30,4 +30,10 @@ const getModelCars = http.get(`${BACKEND_API}/model-cars`, async () => {
   return HttpResponse.json(carModels, { status: 200 });
 });
 
-export const carHandlers = [getSaleCarById, getSaleCars, createSaleCar,getModelCars];
+const buyCar =  http.post(`${BACKEND_API}/purchases/:saleCarId`, async () => {
+  await delay(2000);
+
+  return HttpResponse.json(purchaseResponse, { status: 200 });
+});
+
+export const carHandlers = [getSaleCarById, getSaleCars, createSaleCar,getModelCars,buyCar];

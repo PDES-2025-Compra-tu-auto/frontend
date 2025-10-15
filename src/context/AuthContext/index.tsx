@@ -14,10 +14,11 @@ import {
 type AuthContextType = {
   isAuthenticated: boolean;
   getToken: () => Promise<string | undefined>;
-  login: (credentials: any) => Promise<any>;
+  login: (credentials: Omit<LoginCredentials,'role'>) => Promise<void>;
   logout: () => Promise<void>;
   isLoading: boolean;
   userProfile?: UserProfile;
+  updateProfile:(_newProfile:Partial<UserProfile>)=>void
 };
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -33,6 +34,13 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const [lastValidationTime, setLastValidationTime] = useState<number | null>(
     null
   );
+   const userStoreProfile: UserProfile = useMemo(
+    () =>
+      JSON.parse(localStorage.getItem("userContext") || "null") ?? undefined,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [isAuthenticated]
+  );
+  const [userProfile,setUserProfile]= useState(userStoreProfile)
   const VALIDATION_WINDOW_MS = 3 * 60 * 1000;
 
   useEffect(() => {
@@ -47,7 +55,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const shouldRenewToken = (now: number, expiresAt: number, minutes = 5) => {
-    const buffer = minutes * 60 ;
+    const buffer = minutes * 60;
     const timeUntilExpiry = expiresAt - now;
     return timeUntilExpiry <= buffer;
   };
@@ -66,24 +74,17 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
         setIsLoading(false);
       });
   };
-
-  const userProfile = useMemo(
-    () =>
-      JSON.parse(localStorage.getItem("userContext") || "null") ?? undefined,
-    [localStorage, isAuthenticated]
-  );
+  const clearAuth = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("userContext");
+    setIsAuthenticated(false);
+    setAccessToken(undefined);
+    setLastValidationTime(null);
+  };
 
   const getToken = useCallback(async (): Promise<string | undefined> => {
-    const now = Math.floor(Date.now()/ 1000);
-
-    const clearAuth = () => {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      localStorage.removeItem("userContext");
-      setIsAuthenticated(false);
-      setAccessToken(undefined);
-      setLastValidationTime(null);
-    };
+    const now = Math.floor(Date.now() / 1000);
 
     const storeAndReturnToken = (token: string) => {
       setIsAuthenticated(true);
@@ -126,9 +127,10 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
       clearAuth();
       return undefined;
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accessToken, lastValidationTime, userProfile]);
 
-  const login = async (userCredentials: LoginCredentials) => {
+  const login = async (userCredentials:  Omit<LoginCredentials,'role'>) => {
     try {
       const { accessToken, refreshToken, ...rest } =
         await loginCTA(userCredentials);
@@ -145,12 +147,19 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logout = async () => {
-    setIsAuthenticated(false);
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    setAccessToken(undefined);
-    localStorage.removeItem("userContext");
+    clearAuth();
   };
+
+  const updateProfile=(newProfile:Partial<UserProfile>)=>{
+     localStorage.setItem(
+                "userContext",
+                JSON.stringify({
+                  ...userProfile,
+                  ...newProfile
+                })
+              );
+              setUserProfile({...userProfile,...newProfile})
+  }
 
   const contextValue = useMemo(
     () => ({
@@ -160,13 +169,13 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
       logout,
       isLoading,
       userProfile,
+      updateProfile
     }),
-    [isAuthenticated, getToken, login, logout, isLoading, userProfile]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [isAuthenticated, getToken, isLoading, userProfile]
   );
 
   return (
-    <AuthContext.Provider value={contextValue}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
 };

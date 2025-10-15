@@ -1,12 +1,13 @@
 import { fetchJson } from "@/utils/fetch/httpService";
 import { BACKEND_API } from "../constants";
 import type { FetchServiceEndpoint } from "@/utils/fetch/types";
+import type { PurchaseResponse } from "./types";
 
-export const buyCar = (saleCarId:string): FetchServiceEndpoint<any> => {
+export const buyCar = (saleCarId:string): FetchServiceEndpoint<PurchaseResponse> => {
   return {
     keys: ['purchase', saleCarId],
     fetcher: (options) =>
-        fetchJson<any>({
+        fetchJson<PurchaseResponse>({
             url: `${BACKEND_API}/purchases/${saleCarId}`,
             method: "POST",
             withCredentials: false,
@@ -15,11 +16,11 @@ export const buyCar = (saleCarId:string): FetchServiceEndpoint<any> => {
   };
 }
 
-export const reviewByModelCar = (): FetchServiceEndpoint<any[]> => {
+export const reviewByModelCar = (): FetchServiceEndpoint<PurchaseResponse[]> => {
   return {
     keys: ['dealership-sales'],
     fetcher: (options) =>
-      fetchJson<any[]>({
+      fetchJson<PurchaseResponse[]>({
         url: `${BACKEND_API}/purchases/dealership-sales`,
         method: "GET",
         withCredentials: false,

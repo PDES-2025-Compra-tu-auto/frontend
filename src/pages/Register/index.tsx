@@ -52,24 +52,26 @@ const Register = () => {
     resolver: zodResolver(registrationSchema),
   });
 
-  const onSubmit = async (data: RegistrationFormData) => {
+  const onSubmit = (data: RegistrationFormData) => {
     setIsLoading(true);
     clearErrors();
-    try {
-      await registerCTA({
-        ...data,
-        concesionaryCuit: data.concesionaryCuit?.replace(/-/g, ""),
+
+    registerCTA({
+      ...data,
+      concesionaryCuit: data.concesionaryCuit?.replace(/-/g, ""),
+    })
+      .then(() => {
+        clearErrors();
+        reset();
+        setIsLoggedSuccess(true);
+      })
+      .catch(() => {
+        setError("root", {
+          type: "manual",
+          message:
+            "Ha ocurrido un error en el proceso de registro. Intentá nuevamente",
+        });
       });
-      clearErrors();
-      reset();
-      setIsLoggedSuccess(true);
-    } catch (error) {
-      setError("root", {
-        type: "manual",
-        message:
-          "Ha ocurrido un error en el proceso de registro. Intentá nuevamente",
-      });
-    }
     setIsLoading(false);
   };
 
