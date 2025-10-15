@@ -43,7 +43,7 @@ jobs:
           key: playwright-browsers-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
           restore-keys: |
             playwright-browsers-${{ runner.os }}-
-              
+
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
     
@@ -64,15 +64,12 @@ jobs:
           exit 1
 
       - name: Run Playwright tests
-        run: npx playwright test --project=chromium --reporter=list --output=playwright-report
+        run: npx playwright test --project=chromium --reporter=list --output=test-results
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
-          name: e2e-reports
-          path: playwright-report
-          overwrite: false
-          retention-days: 30
-
+          name: playwright-artifacts
+          path: test-results
       - name: Tear down docker-compose
         if: always()
         run: docker compose -f docker-e2e-compose.yml down -v
