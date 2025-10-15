@@ -1,0 +1,41 @@
+services:
+  db:
+    image: postgres:15
+    container_name: postgres_e2e
+    restart: always
+    environment:
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_pass
+      POSTGRES_DB: test_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test_user"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:  ${BACKEND_PATH}
+    container_name: backend_e2e
+    restart: always
+    ports:
+      - "4000:4000"
+    environment:
+      PORT: 4000
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: test_user
+      DB_PASSWORD: test_pass
+      DB_NAME: test_db
+      JWT_SECRET: test_secret
+    volumes:
+      - ${BACKEND_PATH}:/usr/src/app
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data: {}

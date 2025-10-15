@@ -8,4 +8,5 @@ export interface UserProfile {
     fullname:string,
     email: string ,
     role: UserRole
+    expiresAt:number
 }

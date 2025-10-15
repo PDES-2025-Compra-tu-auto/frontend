@@ -37,6 +37,10 @@ import type {
   ReviewResponse,
 } from "@/services/domain/reviews/types";
 import type { BasicSaleCar } from "@/services/domain/cars/types";
+import type { PurchaseResponse } from "@/services/domain/purchase/types";
+import { buyCar } from "@/services/domain/purchase";
+import { Congrats } from "@/components/core/containers/Congrats";
+import { congratsType } from "./constants";
 
 const CarDetail = () => {
   const { id } = useParams();
@@ -44,13 +48,14 @@ const CarDetail = () => {
   const [reviewScore, setReviewScore] = useState<number>(0);
   const [reviewComment, setReviewComment] = useState<string>("");
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [congrats, setCongrats] = useState<"success" | "error" | null>(null);
   const navigate = useNavigate();
 
   const { data: car, refetch } = useCtaQuery(() => getSaleCar(id as string), {
     enabled: !!id,
   });
 
-  const { data: reviews ,refetch:refetchReviews} = useCtaQuery(
+  const { data: reviews, refetch: refetchReviews } = useCtaQuery(
     () => reviewByModelCar(car?.modelCar?.id || ""),
     { enabled: !!car }
   );
@@ -64,6 +69,11 @@ const CarDetail = () => {
   const createReviewMutation = useCtaMutation<ReviewResponse, AddReview>(
     (data) => addReviewToModelCar(data!)
   );
+
+  const { mutateAsync: buyCarAsyncMutate, isPending } = useCtaMutation<
+    PurchaseResponse,
+    string
+  >((saleCarId) => buyCar(saleCarId!));
 
   const breadcrumbItems = [
     {
@@ -127,7 +137,7 @@ const CarDetail = () => {
       })
       .then(() => {
         toast.success("¡Reseña enviada con éxito!");
-        refetchReviews()
+        refetchReviews();
         setReviewComment("");
         setReviewScore(0);
       })
@@ -139,7 +149,45 @@ const CarDetail = () => {
       });
   };
 
-  return (
+  const handleBuyCar = (saleCarId: string) => {
+    buyCarAsyncMutate(saleCarId)
+      .then(() => {
+        setCongrats("success");
+      })
+      .catch(() => {
+        setCongrats("error");
+      });
+  };
+
+  return congrats ? (
+    <Grid
+      sx={{
+        minHeight: "79vh",
+        bgcolor: "background.default",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        py: 4,
+      }}
+    >
+      <Congrats
+        type={congrats ?? "success"}
+        title={`${congratsType[congrats].title} ${car?.modelCar.brand} ${car?.modelCar.model}`}
+        subtitle={congratsType[congrats].subtitle}
+      >
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          fullWidth
+          sx={{ mb: 2, px: 2 }}
+          onClick={() => navigate("/dashboard")}
+        >
+          Volver al menu
+        </Button>
+      </Congrats>
+    </Grid>
+  ) : (
     <Grid
       container
       flexDirection="column"
@@ -216,7 +264,7 @@ const CarDetail = () => {
                   onClick={() => toggleFavorite(car)}
                   aria-label="marcar favorito"
                 >
-                  { car?.favoritedByUser ? (
+                  {car?.favoritedByUser ? (
                     <Favorite sx={{ color: "red" }} />
                   ) : (
                     <FavoriteBorder />
@@ -235,8 +283,9 @@ const CarDetail = () => {
                 size="large"
                 fullWidth
                 sx={{ mb: 2 }}
+                onClick={() => handleBuyCar(car!.id)}
               >
-                Comprar Ahora
+                {isPending ? "Realizando compra" : "Comprar ahora"}
               </Button>
               <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
                 <Typography variant="body2" color="text.secondary">

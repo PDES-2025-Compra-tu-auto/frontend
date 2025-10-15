@@ -161,7 +161,7 @@ export const carModels = [
   {
     id: "4",
     brand: "Audi",
-    model: 'A4',
+    model: "A4",
     imageUrl:
       "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=100&h=60&fit=crop",
   },
@@ -194,3 +194,39 @@ export const carModels = [
       "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=100&h=60&fit=crop",
   },
 ];
+
+export const purchaseResponse = {
+  id: "2fcb0e3b-a4cb-4ff1-8851-c0c32cd8a542",
+  purchasedPrice: "25000",
+  patent: "2025",
+  createdAt: "2025-10-15T06:12:03.302Z",
+  buyer: {
+    id: "139fcb30-537b-4913-96d1-8ad4cb02e591",
+    fullname: "Juan Comprador",
+    email: "buyer@example.com",
+    role: "BUYER",
+    createdAt: "2025-10-11T06:29:03.060Z",
+  },
+  saleCar: {
+    id: "132167bb-8adb-4590-ae23-e6c474272e4b",
+    price: "25000",
+    status: "AVAILABLE",
+    modelCar: {
+      id: "63b7680f-ed01-44d6-ad1c-f1d9242c7e47",
+      brand: "Ford",
+      model: "Mustang",
+      description: "Deportivo clásico",
+      imageUrl:
+        "https://images.unsplash.com/photo-1625231334168-35067f8853ed?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&fm=webp&q=60&w=3000",
+    },
+    concesionary: {
+      id: "7451bdbe-66c0-47f3-8ccd-8e370853515d",
+      concessionaryName: null,
+      email: "dealer@example.com",
+    },
+  },
+  soldBy: {
+    id: "7451bdbe-66c0-47f3-8ccd-8e370853515d",
+    email: "dealer@example.com",
+  },
+};

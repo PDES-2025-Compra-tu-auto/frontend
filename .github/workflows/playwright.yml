@@ -1,0 +1,75 @@
+name: E2E Tests
+
+on:
+  push:
+    branches:
+      - main
+      - development
+  pull_request:
+    branches:
+      - main
+      - development
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      BACKEND_PATH: ./backend  
+
+    steps:
+      - name: Checkout frontend repo
+        uses: actions/checkout@v5
+
+      - name: Checkout backend repo
+        uses: actions/checkout@v5
+        with:
+          repository: PDES-2025-Compra-tu-auto/backend
+          path: backend
+          ref: ${{ github.event_name == 'pull_request' && github.base_ref || github.ref_name }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 20
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-browsers-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            playwright-browsers-${{ runner.os }}-
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+    
+      - name: Bring up backend + db with docker-compose
+        run: docker compose -f docker-e2e-compose.yml up --build -d
+
+      - name: Wait for backend to be ready
+        run: |
+          for i in {1..90}; do
+            if nc -z localhost 4000; then
+              echo "Backend is up!"
+              exit 0
+            fi
+            echo "Waiting for backend to start..."
+            sleep 2
+          done
+          echo "Backend did not start in time."
+          exit 1
+
+      - name: Run Playwright tests
+        run: npx playwright test --project=chromium --reporter=list --output=test-results
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-artifacts
+          path: test-results
+      - name: Tear down docker-compose
+        if: always()
+        run: docker compose -f docker-e2e-compose.yml down -v
