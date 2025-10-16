@@ -129,7 +129,9 @@ jobs:
             password: ${{ secrets.DOCKER_PASSWORD }}
         - name: Build Docker image
           run: |
-            docker build -t "${{ vars.DOCKER_USERNAME }}/${{ vars.IMAGE_NAME }}:${GITHUB_REF_NAME}" .
+            docker build \
+              --build-arg FE_BACKEND_API=${{ vars.BACKEND_URL }} \
+              -t "${{ vars.DOCKER_USERNAME }}/${{ vars.IMAGE_NAME }}:${GITHUB_REF_NAME}" .
           shell: bash
         - name: Push Docker images
           run: |

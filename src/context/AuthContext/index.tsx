@@ -38,7 +38,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     () =>
       JSON.parse(localStorage.getItem("userContext") || "null") ?? undefined,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isAuthenticated]
+    [isAuthenticated,localStorage]
   );
   const [userProfile,setUserProfile]= useState(userStoreProfile)
   const VALIDATION_WINDOW_MS = 3 * 60 * 1000;
@@ -134,6 +134,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     try {
       const { accessToken, refreshToken, ...rest } =
         await loginCTA(userCredentials);
+      setUserProfile(rest)
       localStorage.setItem("userContext", JSON.stringify(rest));
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
