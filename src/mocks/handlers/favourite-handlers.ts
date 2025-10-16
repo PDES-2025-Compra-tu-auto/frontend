@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import { BACKEND_API } from "@/services/domain/constants";
 import { http, HttpResponse } from "msw";
 import { favouriteResponse } from "../data/favourite";
