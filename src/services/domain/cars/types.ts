@@ -5,7 +5,9 @@ export enum AvailabilityCar {
 
 export interface BasicSaleCar{
     id:string 
+    favoriteId?:string|null,
     price:number
+    favoritedByUser:boolean
 }
 
 export interface SaleCarResponse extends BasicSaleCar{

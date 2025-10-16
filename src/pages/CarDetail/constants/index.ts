@@ -3,11 +3,11 @@ export const congratsType: {
   [key: string]: { title: string; subtitle: string };
 } = {
   success: {
-    title: "Creaste tu publicación de venta correctamente",
-    subtitle: "Podes visualizarla en el menu Gestión de autos",
+    title: "Compraste el vehiculo",
+    subtitle: "Podes visualizarla junto con sus detalles en tus compras",
   },
   error: {
-    title: "Hubo un error al crear tu publicación",
+    title: "Hubo un error al realizar la compra del vehiculo",
     subtitle: "Intenta nuevamente más tarde",
   },
   info: {

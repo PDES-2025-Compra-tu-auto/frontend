@@ -39,11 +39,11 @@ type FormData = {
 };
 
 const Profile = () => {
-  const { userProfile, logout } = useAuth();
+  const { userProfile, logout,updateProfile } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const { data } = useCtaQuery(() => myUser(userProfile?.id));
+  const { data, refetch } = useCtaQuery(() => myUser(userProfile?.id));
   const mutation = useCtaMutation<{ message: string }, UpdateUserDto>((data) =>
     updateUser(data!, userProfile?.id)
   );
@@ -58,17 +58,24 @@ const Profile = () => {
   useEffect(() => {
     setValue("fullname", data?.fullname || "");
     setValue("email", data?.email || "");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   const onSubmit = (formData: FormData) => {
     setIsLoading(true);
+    const {email, fullname} = formData
     toast
       .promise(
         () =>
-          mutation.mutateAsync({
-            fullname: formData.fullname,
-            email: formData.email,
-          }),
+          mutation
+            .mutateAsync({
+              fullname: fullname,
+              email: email,
+            })
+            .then(() => {
+            updateProfile({fullname,email})
+              refetch();
+            }),
         {
           pending: "Actualizando perfil",
           error: "Hubo un error al actualizar el perfil.",
@@ -90,26 +97,24 @@ const Profile = () => {
     logout().then(() => (window.location.href = "/"));
   };
 
-
-  const breadcrumbItems =[
+  const breadcrumbItems = [
     {
-       label: 'Inicio',
-       onClick:()=>navigate('/dashboard') 
+      label: "Inicio",
+      onClick: () => navigate("/dashboard"),
     },
     {
-        label: 'Perfil',
-        enabled:true
-    }
-
-  ]
+      label: "Perfil",
+      enabled: true,
+    },
+  ];
 
   return (
     <>
       <RootBox>
         <MainContainer maxWidth="md">
-        <Breadcrumbs items={breadcrumbItems}/>
+          <Breadcrumbs items={breadcrumbItems} />
 
-          <ProfileSummaryPaper elevation={0} sx={{mt:3}}>
+          <ProfileSummaryPaper elevation={0} sx={{ mt: 3 }}>
             <Avatar
               sx={{ width: 60, height: 60, fontSize: "1.3rem" }}
               name={data?.fullname}

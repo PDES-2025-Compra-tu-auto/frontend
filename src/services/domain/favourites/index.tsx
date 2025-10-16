@@ -17,3 +17,16 @@ export const addSaleCarToFavourite = (data:{saleCarId:string}): FetchServiceEndp
   };
 };
 
+export const deleteFavourite = (favouriteId:string):FetchServiceEndpoint<{message:string}>=>{
+ return {
+    keys: [],
+    fetcher: (options) =>
+      fetchJson<{message:string}>({
+        url: `${BACKEND_API}/favorite-car/${favouriteId}`,
+        method: "DELETE",
+        withCredentials: false,
+        ...options,
+      }).then((res) => res),
+  };
+}
+

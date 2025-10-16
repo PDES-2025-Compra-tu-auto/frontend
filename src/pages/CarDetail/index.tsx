@@ -27,27 +27,35 @@ import {
   addReviewToModelCar,
 } from "@/services/domain/reviews";
 import { useCtaMutation } from "@/hooks/useCtaMutation";
-import { addSaleCarToFavourite } from "@/services/domain/favourites";
+import {
+  addSaleCarToFavourite,
+  deleteFavourite,
+} from "@/services/domain/favourites";
 import { toast } from "react-toastify";
 import type {
   AddReview,
   ReviewResponse,
 } from "@/services/domain/reviews/types";
+import type { BasicSaleCar } from "@/services/domain/cars/types";
+import type { PurchaseResponse } from "@/services/domain/purchase/types";
+import { buyCar } from "@/services/domain/purchase";
+import { Congrats } from "@/components/core/containers/Congrats";
+import { congratsType } from "./constants";
 
 const CarDetail = () => {
   const { id } = useParams();
   const [selectedImage, setSelectedImage] = useState("");
-  const [isFavorite, setIsFavorite] = useState(false);
   const [reviewScore, setReviewScore] = useState<number>(0);
   const [reviewComment, setReviewComment] = useState<string>("");
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [congrats, setCongrats] = useState<"success" | "error" | null>(null);
   const navigate = useNavigate();
 
-  const { data: car } = useCtaQuery(() => getSaleCar(id as string), {
+  const { data: car, refetch } = useCtaQuery(() => getSaleCar(id as string), {
     enabled: !!id,
   });
 
-  const { data: reviews } = useCtaQuery(
+  const { data: reviews, refetch: refetchReviews } = useCtaQuery(
     () => reviewByModelCar(car?.modelCar?.id || ""),
     { enabled: !!car }
   );
@@ -55,10 +63,17 @@ const CarDetail = () => {
   const addToFavMutation = useCtaMutation<any, { saleCarId: string }>((data) =>
     addSaleCarToFavourite(data!)
   );
-
+  const deleteFavMutation = useCtaMutation<{ message: string }, string>(
+    (data) => deleteFavourite(data!)
+  );
   const createReviewMutation = useCtaMutation<ReviewResponse, AddReview>(
     (data) => addReviewToModelCar(data!)
   );
+
+  const { mutateAsync: buyCarAsyncMutate, isPending } = useCtaMutation<
+    PurchaseResponse,
+    string
+  >((saleCarId) => buyCar(saleCarId!));
 
   const breadcrumbItems = [
     {
@@ -69,15 +84,36 @@ const CarDetail = () => {
     { label: "Detalle", enabled: true },
   ];
 
-  const toggleFavorite = (saleCarId: string) => {
-    setIsFavorite((prev) => !prev);
+  const addToFavourites = (saleCarId: string) => {
     addToFavMutation
       .mutateAsync({ saleCarId })
-      .then(() => toast.success("Vehiculo agregado a favoritos"))
+      .then(() => {
+        refetch();
+        toast.success("Vehiculo agregado a favoritos");
+      })
       .catch(() => {
         toast.error("Ha ocurrido un error al agregar el vehiculo a favoritos");
-        setIsFavorite((prev) => !prev);
       });
+  };
+
+  const remoteToFavourites = (favouriteId: string) => {
+    deleteFavMutation
+      .mutateAsync(favouriteId)
+      .then(() => {
+        refetch();
+        toast.success("Auto removido de favoritos");
+      })
+      .catch(() => {
+        toast.error("Ha ocurrido un error, intente nuevamente");
+      });
+  };
+
+  const toggleFavorite = (car?: BasicSaleCar) => {
+    if (car?.favoritedByUser) {
+      remoteToFavourites(car.favoriteId!);
+    } else {
+      addToFavourites(car!.id);
+    }
   };
 
   const handleSubmitReview = () => {
@@ -101,6 +137,7 @@ const CarDetail = () => {
       })
       .then(() => {
         toast.success("¡Reseña enviada con éxito!");
+        refetchReviews();
         setReviewComment("");
         setReviewScore(0);
       })
@@ -112,7 +149,45 @@ const CarDetail = () => {
       });
   };
 
-  return (
+  const handleBuyCar = (saleCarId: string) => {
+    buyCarAsyncMutate(saleCarId)
+      .then(() => {
+        setCongrats("success");
+      })
+      .catch(() => {
+        setCongrats("error");
+      });
+  };
+
+  return congrats ? (
+    <Grid
+      sx={{
+        minHeight: "79vh",
+        bgcolor: "background.default",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        py: 4,
+      }}
+    >
+      <Congrats
+        type={congrats ?? "success"}
+        title={`${congratsType[congrats].title} ${car?.modelCar.brand} ${car?.modelCar.model}`}
+        subtitle={congratsType[congrats].subtitle}
+      >
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          fullWidth
+          sx={{ mb: 2, px: 2 }}
+          onClick={() => navigate("/dashboard")}
+        >
+          Volver al menu
+        </Button>
+      </Congrats>
+    </Grid>
+  ) : (
     <Grid
       container
       flexDirection="column"
@@ -122,7 +197,7 @@ const CarDetail = () => {
         bgcolor: "background.default",
       }}
     >
-      <Grid  sx={{ py: 1 }}>
+      <Grid sx={{ py: 1 }}>
         <Breadcrumbs items={breadcrumbItems} />
 
         <Box
@@ -139,9 +214,7 @@ const CarDetail = () => {
                 component="img"
                 height="500"
                 loading="lazy"
-                image={
-                  selectedImage || car?.modelCar.imageUrl || "/fallback.jpg"
-                }
+                image={selectedImage || car?.modelCar.imageUrl}
                 alt={`${car?.modelCar.brand} ${car?.modelCar.model}`}
                 sx={{ bgcolor: "grey.200" }}
               />
@@ -188,10 +261,10 @@ const CarDetail = () => {
                   {car?.modelCar.brand} {car?.modelCar.model}
                 </Typography>
                 <IconButton
-                  onClick={() => toggleFavorite(car!.id)}
+                  onClick={() => toggleFavorite(car)}
                   aria-label="marcar favorito"
                 >
-                  {isFavorite ? (
+                  {car?.favoritedByUser ? (
                     <Favorite sx={{ color: "red" }} />
                   ) : (
                     <FavoriteBorder />
@@ -210,8 +283,9 @@ const CarDetail = () => {
                 size="large"
                 fullWidth
                 sx={{ mb: 2 }}
+                onClick={() => handleBuyCar(car!.id)}
               >
-                Comprar Ahora
+                {isPending ? "Realizando compra" : "Comprar ahora"}
               </Button>
               <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
                 <Typography variant="body2" color="text.secondary">
