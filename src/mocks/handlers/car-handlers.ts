@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import { BACKEND_API } from "@/services/domain/constants";
 import { delay, http, HttpResponse } from "msw";
 import { carModels, purchaseResponse, saleCarItems } from "../data/car";

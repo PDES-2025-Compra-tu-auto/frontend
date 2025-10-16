@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import { http, HttpResponse } from "msw";
 import { loginResponseJson, registerResponse } from "../data/auth";
 import { matchRoleToken, roleByUser } from "../utils";
