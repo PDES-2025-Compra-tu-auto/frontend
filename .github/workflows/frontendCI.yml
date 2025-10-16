@@ -67,8 +67,7 @@ jobs:
         with:
           repository: PDES-2025-Compra-tu-auto/backend
           path: backend
-          ref: ${{ github.event_name == 'pull_request' && github.base_ref || github.ref_name }}
-
+          ref: ${{ github.event_name == 'pull_request' && github.base_ref || (startsWith(github.ref, 'refs/tags/') && 'main' || github.ref_name) }}
       - name: Set up Node.js
         uses: actions/setup-node@v5
         with:
