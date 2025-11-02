@@ -16,7 +16,7 @@ export const buyCar = (saleCarId:string): FetchServiceEndpoint<PurchaseResponse>
   };
 }
 
-export const reviewByModelCar = (): FetchServiceEndpoint<PurchaseResponse[]> => {
+export const concesionarySales = (): FetchServiceEndpoint<PurchaseResponse[]> => {
   return {
     keys: ['dealership-sales'],
     fetcher: (options) =>

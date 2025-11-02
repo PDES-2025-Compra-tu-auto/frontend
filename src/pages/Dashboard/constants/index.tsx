@@ -26,6 +26,7 @@ export const CARDS_PROFILE: ICardsProfile = {
   },
   "favourites-cars": {
     icon: <FavoriteBorderIcon sx={iconStyle} />,
+    redirect: '/favourites'
   },
   "explore-cars": {
     icon: <DirectionsCarIcon sx={iconStyle} />,
@@ -48,6 +49,7 @@ export const CARDS_PROFILE: ICardsProfile = {
   },
   sales: {
     icon: <PointOfSaleIcon sx={iconStyle} />,
+    redirect: '/concesionary/sales'
   },
   customers: {
     icon: <PeopleAltOutlinedIcon sx={iconStyle} />,

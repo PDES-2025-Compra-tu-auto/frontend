@@ -10,6 +10,8 @@ import Profile from "./pages/Profile";
 import ExploreCars from "./pages/Cars";
 import CarDetail from "./pages/CarDetail";
 import CreateSaleCar from "./pages/CreateSaleCar";
+import Favourites from "./pages/Favourites";
+import ConcessionarySales from "./pages/ConcesionarySales";
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
           <Route path="/cars" element={<ExploreCars />} />
           <Route path="/car/:id" element={<CarDetail />} />
           <Route path="/sale-car" element={<CreateSaleCar />} />
+          <Route path="/concesionary/sales" element={<ConcessionarySales/>}/>
+          <Route path="/favourites" element={<Favourites/>} />
         </Route>
 
         <Route element={<PublicRoute />}>
