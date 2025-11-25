@@ -267,16 +267,7 @@ const Register = () => {
                         )}
                       />
                     </Box>
-                    <Box sx={{ mb: 3 }}>
-                      <TextField
-                        fullWidth
-                        label="Nombre de Concesionaria"
-                        error={!!errors.concesionaryName}
-                        helperText={errors.concesionaryName?.message}
-                        disabled={isLoading}
-                        {...register("concesionaryName")}
-                      />
-                    </Box>
+                 
                   </>
                 )}
 

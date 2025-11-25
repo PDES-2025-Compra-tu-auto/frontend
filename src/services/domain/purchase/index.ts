@@ -28,3 +28,16 @@ export const concesionarySales = (): FetchServiceEndpoint<PurchaseResponse[]> =>
       }).then((res) => res),
   };
 };
+
+export const buyerPurchases = (): FetchServiceEndpoint<PurchaseResponse[]> => {
+  return {
+    keys: ['buyer-purchases'],
+    fetcher: (options) =>
+      fetchJson<PurchaseResponse[]>({
+        url: `${BACKEND_API}/purchases/my-purchases`,
+        method: "GET",
+        withCredentials: false,
+        ...options,
+      }).then((res) => res),
+  };
+};

@@ -1,16 +1,17 @@
 import { fetchJson } from "@/utils/fetch/httpService";
 import type { FetchServiceEndpoint } from "@/utils/fetch/types";
 import { BACKEND_API } from "../constants";
-import type { AvailabilityCar, ModelCar, SaleCarResponse } from "./types";
+import type { AvailabilityCar, ModelCar, SaleCarParams, SaleCarResponse } from "./types";
 
-export const getSaleCars = (): FetchServiceEndpoint<SaleCarResponse[]> => {
+export const getSaleCars = (filters?:Partial<SaleCarParams>): FetchServiceEndpoint<SaleCarResponse[]> => {
   return {
-    keys: ["cars"],
+    keys: ["cars",filters],
     fetcher: (options) =>
       fetchJson<SaleCarResponse[]>({
         url: `${BACKEND_API}/sale-car`,
         method: "GET",
         withCredentials: false,
+        params:filters,
         ...options,
       }).then((res) => res),
   };

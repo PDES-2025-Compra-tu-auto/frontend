@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cta-frontend-config
+  namespace: cta-app
+data:
+  FE_BACKEND_API: "https://cta-backend.com/api"

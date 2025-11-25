@@ -1,6 +1,6 @@
 export const saleCarItems = [
   {
-    id: "b3d5f0fa-2c4e-4b62-8aeb-0e83c7d9f67f",
+    id: "d290f1ee-6c54-4b01-90e6-d701748f0851",
     favoriteId: "b4d5f0fa-2c4e-4b62-8aeb-0e83c7d9f67f",
     price: 15000,
     status: "AVAILABLE",

@@ -1,6 +1,6 @@
 export enum AvailabilityCar {
     AVAILABLE = 'AVAILABLE',
-    UNAVAILABLE= 'UNAVAILABLE'
+    UNAVAILABLE= 'NOT_AVAILABLE'
 }
 
 export interface BasicSaleCar{
@@ -28,4 +28,13 @@ interface Concessionary {
   id: string; 
   concessionaryName: string;
   email:string
+}
+
+export interface SaleCarParams {
+  minPrice: number 
+  maxPrice: number
+  status: AvailabilityCar
+  modelId:string 
+  concesionaryId:string 
+  keyword:string //brand
 }
