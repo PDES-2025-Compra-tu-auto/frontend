@@ -5,17 +5,16 @@ import {
   CardMedia,
   CardContent,
   Stack,
-  Grid,
 } from "@mui/material";
 import { DirectionsCar as CarIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/common/Button";
-import { Breadcrumbs } from "@/components/common/Breadcrumb";
 import { useCtaQuery } from "@/hooks/useCtaQuery";
 import { buyerPurchases } from "@/services/domain/purchase";
 import type { PurchaseResponse } from "@/services/domain/purchase/types";
 import { useState } from "react";
 import { PurchaseReceiptModal } from "./components/PurchaseReceiptModal";
+import { PageContainer } from "@/components/core/containers/PageContainer";
 
 const BuyerPurchases = () => {
   const navigate = useNavigate();
@@ -40,29 +39,10 @@ const BuyerPurchases = () => {
   ];
 
   return (
-    <Grid
-      container
-      flexDirection="column"
-      sx={{
-        px: { xs: 3, md: 8 },
-        py: { xs: 4, md: 6 },
-        bgcolor: "background.default",
-      }}
-    >
-      <Grid sx={{ py: 1 }}>
-        <Breadcrumbs items={breadcrumbItems} />
-
-        <Box sx={{ mb: 4, mt: 4 }}>
-          <Typography
-            variant="h4"
-            sx={{ mb: 3, color: "text.primary", fontWeight: "bold" }}
-          >
-            Mis autos comprados
-          </Typography>
-        </Box>
+    <PageContainer title="Mis autos comprados" breadcrumbItems={breadcrumbItems}>
         <Box sx={{ mb: 3 }}>
           <Typography variant="h6" sx={{ color: "text.secondary" }}>
-           {purchases?.length} {purchases?.length!==1?  'autos encontrados': 'auto encontrado'}
+           {purchases?.length} {purchases?.length===1 ? 'auto encontrado' : 'autos encontrados'}
           </Typography>
         </Box>
 
@@ -145,9 +125,8 @@ const BuyerPurchases = () => {
             </Typography>
           </Box>
         )}
-      </Grid>
       <PurchaseReceiptModal purchase={purchaseData} onClose={onClose}/>
-    </Grid>
+    </PageContainer>
   );
 };
 

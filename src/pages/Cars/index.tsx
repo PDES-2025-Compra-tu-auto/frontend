@@ -204,7 +204,7 @@ const handleFilterChange = (field: string, value: string) => {
 
         <Box sx={{ mb: 3 }}>
           <Typography variant="h6" sx={{ color: "text.secondary" }}>
-           {cars?.length} {cars?.length!==1?  'autos encontrados': 'auto encontrado'}
+           {cars?.length} {cars?.length === 1 ? 'auto encontrado' : 'autos encontrados'}
           </Typography>
         </Box>
 

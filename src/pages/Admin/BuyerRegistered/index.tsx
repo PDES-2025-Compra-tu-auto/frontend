@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { Grid, Typography, Button } from "@mui/material";
-import { Breadcrumbs } from "@/components/common/Breadcrumb";
+import { Typography, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useCtaQuery } from "@/hooks/useCtaQuery";
 import { CtaTable } from "@/components/core/containers/Table";
@@ -8,6 +7,7 @@ import { columns } from "./constants/table";
 import { allUsers } from "@/services/domain/admin";
 import { UserRole } from "@/domain/user/types";
 import { BuyerReviewsDialog } from "./compontents/BuyerReviewsDialog";
+import { PageContainer } from "@/components/core/containers/PageContainer";
 
 const BuyerRegistered = () => {
   const [page, setPage] = useState(0);
@@ -27,24 +27,7 @@ const BuyerRegistered = () => {
   ];
 
   return (
-    <Grid
-      container
-      flexDirection="column"
-      sx={{
-        px: { xs: 3, md: 8 },
-        py: { xs: 4, md: 6 },
-        bgcolor: "background.default",
-      }}
-    >
-      <Grid sx={{ py: 1 }}>
-        <Breadcrumbs items={breadcrumbItems} />
-
-        <Typography
-          variant="h4"
-          sx={{ fontWeight: 600, mt: 2, color: "#1a1a1a" }}
-        >
-          Compradores registrados
-        </Typography>
+  <PageContainer title="Compradores registrados" breadcrumbItems={breadcrumbItems}>
         <Typography
           variant="body1"
           sx={{ fontWeight: 500, mt: 2, color: "#1a1a1a" }}
@@ -71,13 +54,12 @@ const BuyerRegistered = () => {
           page={page}
           onPageChange={setPage}
         />
-      </Grid>
 
       <BuyerReviewsDialog
         open={openReviews}
         onClose={() => setOpenReviews(false)}
       />
-    </Grid>
+      </PageContainer>
   );
 };
 

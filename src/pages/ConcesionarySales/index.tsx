@@ -1,12 +1,10 @@
 import { useState } from "react";
-import { Grid, Typography } from "@mui/material";
-import { Breadcrumbs } from "@/components/common/Breadcrumb";
 import { useNavigate } from "react-router-dom";
 import { useCtaQuery } from "@/hooks/useCtaQuery";
 import { concesionarySales } from "@/services/domain/purchase";
 import { CtaTable } from "@/components/core/containers/Table";
 import { columns } from "./constants/table";
-
+import { PageContainer } from "@/components/core/containers/PageContainer";
 
 const ConcessionarySales = () => {
   const [page, setPage] = useState(0);
@@ -19,38 +17,21 @@ const ConcessionarySales = () => {
     { label: "Ventas", enabled: true },
   ];
 
-
-
   return (
-    <Grid
-      container
-      flexDirection="column"
-      sx={{
-        px: { xs: 3, md: 8 },
-        py: { xs: 4, md: 6 },
-        bgcolor: "background.default",
-      }}
+    <PageContainer
+      title={"Ventas del Concesionario"}
+      breadcrumbItems={breadcrumbItems}
     >
-      <Grid sx={{ py: 1 }}>
-        <Breadcrumbs items={breadcrumbItems} />
-        <Typography
-          variant="h4"
-          sx={{ fontWeight: 600, mt: 2, color: "#1a1a1a" }}
-        >
-          Ventas del Concesionario
-        </Typography>
-
-        <CtaTable
-          columns={columns}
-          data={sales}
-          isLoading={isLoading}
-          rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={setRowsPerPage}
-          page={page}
-          onPageChange={setPage}
-        />
-      </Grid>
-    </Grid>
+      <CtaTable
+        columns={columns}
+        data={sales}
+        isLoading={isLoading}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={setRowsPerPage}
+        page={page}
+        onPageChange={setPage}
+      />
+    </PageContainer>
   );
 };
 
