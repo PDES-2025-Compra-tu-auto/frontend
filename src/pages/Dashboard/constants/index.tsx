@@ -59,6 +59,7 @@ export const CARDS_PROFILE: ICardsProfile = {
   },
   customers: {
     icon: <PeopleAltOutlinedIcon sx={iconStyle} />,
+    redirect: '/concesionary/customers'
   },
   default: {
     icon: <HelpOutlineIcon sx={iconStyle} />,

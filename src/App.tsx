@@ -18,6 +18,7 @@ import ManageConcesionaries from "./pages/Admin/ConcesionaryManage";
 import Favourites from "./pages/Favourites";
 import BuyerPurchases from "./pages/BuyerPurchases";
 import ManageSaleCar from "./pages/ManageSaleCar";
+import ConcessionaryCustomers from "./pages/ConcesionaryClients";
 
 function App() {
   return (
@@ -35,6 +36,8 @@ function App() {
           <Route path="/purchases" element={<BuyerPurchases />} />
           <Route path="/sale-car" element={<CreateSaleCar />} />
           <Route path="/concesionary/sales" element={<ConcessionarySales />} />
+          <Route path="/concesionary/customers" element={<ConcessionaryCustomers />} />
+          
           <Route path='/concesionary/manage-cars' element={<ManageSaleCar/>}/>
           <Route
             path="/admin/favourites-cars"
