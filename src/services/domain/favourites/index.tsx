@@ -30,3 +30,15 @@ export const deleteFavourite = (favouriteId:string):FetchServiceEndpoint<{messag
   };
 }
 
+export const getMyFavourites = (): FetchServiceEndpoint<FavoriteResponse[]> => {
+  return {
+    keys: [],
+    fetcher: (options) =>
+      fetchJson<FavoriteResponse[]>({
+        url: `${BACKEND_API}/favorite-car/me`,
+        method: "GET",
+        withCredentials: false,
+        ...options,
+      }).then((res) => res),
+  };
+};

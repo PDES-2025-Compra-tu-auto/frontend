@@ -23,9 +23,11 @@ export const CARDS_PROFILE: ICardsProfile = {
 
   "my-cars": {
     icon: <CarRentalIcon sx={iconStyle} />,
+    redirect: '/purchases'
   },
   "favourites-cars": {
     icon: <FavoriteBorderIcon sx={iconStyle} />,
+    redirect: '/favourites'
   },
   "explore-cars": {
     icon: <DirectionsCarIcon sx={iconStyle} />,
@@ -33,24 +35,35 @@ export const CARDS_PROFILE: ICardsProfile = {
   },
   reports: {
     icon: <InsertChartOutlinedIcon sx={iconStyle} />,
+    redirect: '/admin/reports'
   },
   "most-favorited-cars": {
     icon: <FavoriteBorderIcon sx={iconStyle} />,
+    redirect: '/admin/favourites-cars'
   },
   "registered-users": {
     icon: <PeopleAltOutlinedIcon sx={iconStyle} />,
+    redirect:'/admin/buyers'
+  },
+  "total-purchases": {
+    icon: <PointOfSaleIcon sx={iconStyle} />,
+    redirect: '/admin/total-purchases'
   },
   "manage-concesionaries": {
     icon: <StorefrontOutlinedIcon sx={iconStyle} />,
+    redirect: '/admin/concesionaries'
   },
   "manage-cars": {
     icon: <DirectionsCarIcon sx={iconStyle} />,
+    redirect: '/concesionary/manage-cars'
   },
   sales: {
     icon: <PointOfSaleIcon sx={iconStyle} />,
+    redirect: '/concesionary/sales'
   },
   customers: {
     icon: <PeopleAltOutlinedIcon sx={iconStyle} />,
+    redirect: '/concesionary/customers'
   },
   default: {
     icon: <HelpOutlineIcon sx={iconStyle} />,

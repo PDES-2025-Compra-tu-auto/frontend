@@ -29,9 +29,8 @@ class ErrorBoundary extends React.Component<Props, State> {
     this.setState({ error });
   }
 
-  handleLogin = () => {
-    // Aquí puedes redirigir al login. Ejemplo con window.location:
-    window.location.href = "/login";
+  handleDash = () => {
+    window.location.href = "/dashboard";
   };
 
   render() {
@@ -59,10 +58,10 @@ class ErrorBoundary extends React.Component<Props, State> {
             <Button
               variant="contained"
               color="primary"
-              onClick={this.handleLogin}
+              onClick={this.handleDash}
               sx={{ mt: 2 }}
             >
-              Iniciar sesión
+              Volver al menú
             </Button>
           </Grid>
         )

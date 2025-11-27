@@ -2,7 +2,13 @@
 // @ts-nocheck
 import { BACKEND_API } from "@/services/domain/constants";
 import { delay, http, HttpResponse } from "msw";
-import { carModels, purchaseResponse, saleCarItems } from "../data/car";
+import {
+  carModels,
+  purchaseResponse,
+  saleCarItems,
+  purchaseResponses,
+} from "../data/car";
+import { users } from "../data/user";
 
 const getSaleCars = http.get(`${BACKEND_API}/sale-car`, async () => {
   return HttpResponse.json(saleCarItems, { status: 200 });
@@ -27,15 +33,44 @@ const createSaleCar = http.post(`${BACKEND_API}/sale-car`, async () => {
   return HttpResponse.json(saleCarItems[0], { status: 201 });
 });
 
-
 const getModelCars = http.get(`${BACKEND_API}/model-cars`, async () => {
   return HttpResponse.json(carModels, { status: 200 });
 });
 
-const buyCar =  http.post(`${BACKEND_API}/purchases/:saleCarId`, async () => {
+const buyCar = http.post(`${BACKEND_API}/purchases/:saleCarId`, async () => {
   await delay(2000);
 
   return HttpResponse.json(purchaseResponse, { status: 200 });
 });
 
-export const carHandlers = [getSaleCarById, getSaleCars, createSaleCar,getModelCars,buyCar];
+const getConcesionarySales = http.get(
+  `${BACKEND_API}/purchases/dealership-sales`,
+  async () => {
+    return HttpResponse.json(purchaseResponses, { status: 200 });
+  }
+);
+
+const buyerPurchases = http.get(
+  `${BACKEND_API}/purchases/my-purchases`,
+  async () => {
+    return HttpResponse.json(purchaseResponses, { status: 200 });
+  }
+);
+
+const buyerConcesionaryClients = http.get(
+  `${BACKEND_API}/purchases/my-clients`,
+  async () => {
+    return HttpResponse.json(users, { status: 200 });
+  }
+);
+
+export const carHandlers = [
+  getSaleCarById,
+  getSaleCars,
+  createSaleCar,
+  getModelCars,
+  buyCar,
+  getConcesionarySales,
+  buyerPurchases,
+  buyerConcesionaryClients
+];
