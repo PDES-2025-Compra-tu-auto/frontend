@@ -53,7 +53,7 @@ const Favourites = () => {
       title="Mis autos favoritos"
       breadcrumbItems={breadcrumbItems}
     >
-      <Box sx={{ mb: 3 }}>
+      <Box sx={{ mb: 3,mt:3 }}>
         <Typography variant="h6" sx={{ color: "text.secondary" }}>
           {cars?.length}{" "}
           {cars?.length === 1 ? "auto encontrado" : "autos encontrados"}

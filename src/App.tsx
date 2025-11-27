@@ -19,6 +19,7 @@ import Favourites from "./pages/Favourites";
 import BuyerPurchases from "./pages/BuyerPurchases";
 import ManageSaleCar from "./pages/ManageSaleCar";
 import ConcessionaryCustomers from "./pages/ConcesionaryClients";
+import TotalPurchases from "./pages/Admin/TotalPurchases";
 
 function App() {
   return (
@@ -48,6 +49,7 @@ function App() {
             path="/admin/concesionaries"
             element={<ManageConcesionaries />}
           />
+          <Route path="/admin/total-purchases" element={<TotalPurchases/>} />
         </Route>
 
         <Route element={<PublicRoute />}>

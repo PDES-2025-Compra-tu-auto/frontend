@@ -40,7 +40,7 @@ const BuyerPurchases = () => {
 
   return (
     <PageContainer title="Mis autos comprados" breadcrumbItems={breadcrumbItems}>
-        <Box sx={{ mb: 3 }}>
+        <Box sx={{ mb: 3, mt:3 }}>
           <Typography variant="h6" sx={{ color: "text.secondary" }}>
            {purchases?.length} {purchases?.length===1 ? 'auto encontrado' : 'autos encontrados'}
           </Typography>

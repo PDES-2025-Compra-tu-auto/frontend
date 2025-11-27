@@ -1,6 +1,7 @@
+import type { UserResponseDto } from "@/services/domain/user/types";
 import type { ColumnDef } from "@tanstack/react-table";
 
- export const columns: ColumnDef<any>[] = [
+ export const columns: ColumnDef<UserResponseDto>[] = [
     {
       header: "Fecha de compra",
       cell: ({ row }) =>

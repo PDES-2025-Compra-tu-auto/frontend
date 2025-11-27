@@ -1,5 +1,4 @@
 import { useState } from "react";
-import {  Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useCtaQuery } from "@/hooks/useCtaQuery";
 import { buyerConcesionaryClients } from "@/services/domain/purchase";
@@ -25,12 +24,6 @@ const ConcessionaryCustomers = () => {
       title={"Mis clientes"}
       breadcrumbItems={breadcrumbItems}
     >
-      <Typography
-        variant="h4"
-        sx={{ fontWeight: 600, mt: 2, color: "#1a1a1a" }}
-      >
-        Mis clientes
-      </Typography>
       <CtaTable
         columns={columns}
         data={clients}

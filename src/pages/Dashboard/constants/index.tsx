@@ -45,6 +45,10 @@ export const CARDS_PROFILE: ICardsProfile = {
     icon: <PeopleAltOutlinedIcon sx={iconStyle} />,
     redirect:'/admin/buyers'
   },
+  "total-purchases": {
+    icon: <PointOfSaleIcon sx={iconStyle} />,
+    redirect: '/admin/total-purchases'
+  },
   "manage-concesionaries": {
     icon: <StorefrontOutlinedIcon sx={iconStyle} />,
     redirect: '/admin/concesionaries'
