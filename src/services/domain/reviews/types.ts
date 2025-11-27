@@ -12,6 +12,7 @@ export interface ModelCar {
   brand: string;
   model: string;
   description: string;
+  imageUrl?:string
 }
 
 export interface Buyer {

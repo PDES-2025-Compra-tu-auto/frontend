@@ -18,5 +18,7 @@ const deletefavourite = http.delete(
     );
   }
 );
-
-export const favouriteHandlers = [addToFavourite,deletefavourite];
+const getMyFavourites = http.get(`${BACKEND_API}/favorite-car/me`, async () => {
+  return HttpResponse.json([favouriteResponse], { status: 200 });
+});
+export const favouriteHandlers = [addToFavourite,deletefavourite,getMyFavourites];

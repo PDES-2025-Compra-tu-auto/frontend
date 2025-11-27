@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cta-service
+  namespace: cta-app
+spec:
+  selector:
+    app: cta-frontend
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 80

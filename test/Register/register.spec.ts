@@ -14,7 +14,6 @@ test.describe('Registro de usuario - E2E', () => {
     await expect(page.getByLabel('CUIT de Concesionaria')).toBeVisible();
 
     await page.getByLabel('CUIT de Concesionaria').fill('20-12345678-3');
-    await page.getByLabel('Nombre de Concesionaria').fill('Autos del Norte');
 
     await page.getByRole('button', { name: 'Crear Cuenta' }).click();
 
