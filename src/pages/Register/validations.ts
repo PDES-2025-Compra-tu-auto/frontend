@@ -32,14 +32,7 @@ export const registrationSchema = z
         });
       }
 
-      // Validar nombre
-      if (!data.concesionaryName || data.concesionaryName.trim() === "") {
-        ctx.addIssue({
-          path: ["concesionaryName"],
-          code: "custom",
-          message: "El nombre de la concesionaria es obligatorio",
-        });
-      }
+   
     }
   });
 

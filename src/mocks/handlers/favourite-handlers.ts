@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import { BACKEND_API } from "@/services/domain/constants";
 import { http, HttpResponse } from "msw";
 import { favouriteResponse } from "../data/favourite";
@@ -16,5 +18,7 @@ const deletefavourite = http.delete(
     );
   }
 );
-
-export const favouriteHandlers = [addToFavourite,deletefavourite];
+const getMyFavourites = http.get(`${BACKEND_API}/favorite-car/me`, async () => {
+  return HttpResponse.json([favouriteResponse], { status: 200 });
+});
+export const favouriteHandlers = [addToFavourite,deletefavourite,getMyFavourites];

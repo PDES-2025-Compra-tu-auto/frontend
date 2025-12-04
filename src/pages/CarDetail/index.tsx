@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type FC } from "react";
 import {
   Box,
   Typography,
@@ -41,8 +41,13 @@ import type { PurchaseResponse } from "@/services/domain/purchase/types";
 import { buyCar } from "@/services/domain/purchase";
 import { Congrats } from "@/components/core/containers/Congrats";
 import { congratsType } from "./constants";
+import type { FavoriteResponse } from "@/services/domain/favourites/types";
 
-const CarDetail = () => {
+interface CarDetailProps{
+ from: 'CARS' | 'FAV'
+}
+
+const CarDetail:FC<CarDetailProps> = ({from}) => {
   const { id } = useParams();
   const [selectedImage, setSelectedImage] = useState("");
   const [reviewScore, setReviewScore] = useState<number>(0);
@@ -60,7 +65,7 @@ const CarDetail = () => {
     { enabled: !!car }
   );
 
-  const addToFavMutation = useCtaMutation<any, { saleCarId: string }>((data) =>
+  const addToFavMutation = useCtaMutation<FavoriteResponse, { saleCarId: string }>((data) =>
     addSaleCarToFavourite(data!)
   );
   const deleteFavMutation = useCtaMutation<{ message: string }, string>(
@@ -75,14 +80,17 @@ const CarDetail = () => {
     string
   >((saleCarId) => buyCar(saleCarId!));
 
-  const breadcrumbItems = [
-    {
-      label: "Inicio",
-      onClick: () => navigate("/dashboard"),
-    },
-    { label: "Autos", onClick: () => navigate("/cars") },
-    { label: "Detalle", enabled: true },
-  ];
+
+const breadcrumbItems = [
+  { label: "Inicio", onClick: () => navigate("/dashboard") },
+
+  from === "CARS"
+    ? { label: "Autos", onClick: () => navigate("/cars") }
+    : { label: "Favoritos", onClick: () => navigate("/favourites") },
+
+  { label: "Detalle", enabled: true },
+];
+
 
   const addToFavourites = (saleCarId: string) => {
     addToFavMutation

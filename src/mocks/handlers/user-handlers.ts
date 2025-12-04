@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import { delay, http, HttpResponse } from "msw";
 import { matchRoleToken } from "../utils";
 import { me, profile, update } from "../data/user";

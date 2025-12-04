@@ -6,7 +6,7 @@ import {
 } from "@mui/material";
 import type { FC } from "react";
 
-type BreadcrumbItem = {
+export type BreadcrumbItem = {
   label: string;
   onClick?: () => void;
   enabled?: boolean;

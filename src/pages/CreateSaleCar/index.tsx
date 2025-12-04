@@ -76,7 +76,7 @@ const CreateSaleCar = () => {
       label: "Inicio",
       onClick: () => navigate("/dashboard"),
     },
-    { label: "Nueva venta", enabled: true },
+    { label: "Nueva publicacion", enabled: true },
   ];
 
   return type ? (
