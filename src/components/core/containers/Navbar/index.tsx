@@ -70,7 +70,7 @@ export const Navbar = () => {
               component="div"
               sx={{ fontWeight: "bold", pt: 0.5 }}
             >
-              Compra tu auto
+              Compra tu carro
             </Typography>
             {isAuthenticated && (
               <>
